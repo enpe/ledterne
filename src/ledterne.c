@@ -35,7 +35,7 @@
 #include <util/delay.h>
 
 
-#define MAX_INTENSITY 63
+#define MAX_INTENSITY 31
 
 // LED outputs (connected to the anodes)
 #define PIN_G PB1
@@ -51,11 +51,6 @@ uint8_t g_pwm[ MAX_INTENSITY + 1 ] =
 	  4,   5,   6,   7,   9,  10,  12,  15,
 	 17,  21,  25,  30,  36,  43,  51,  61,
 	 73,  87, 104, 125, 149, 178, 213, 255,
-
-	255, 213, 178, 149, 125, 104,  87,  73,
-	 61,  51,  43,  36,  30,  25,  21,  17,
-	 15,  12,  10,   9,   7,   6,   5,   4,
-	  3,   3,   3,   2,   1,   1,   1,   0,
 };
 
 
@@ -148,6 +143,43 @@ void rampUp( uint8_t* intensity, uint8_t stepSize )
 }
 
 
+void rampUpDown( uint8_t* intensity, uint8_t* up, uint8_t stepSize )
+{
+	if( *up )
+	{
+		if( *intensity <= MAX_INTENSITY - stepSize )
+		{
+			*intensity += stepSize;
+			if( *intensity == MAX_INTENSITY )
+			{
+				*up = 0;
+			}
+		}
+		else
+		{
+			*up = 0;
+			*intensity = MAX_INTENSITY;
+		}
+	}
+	else
+	{
+		if( *intensity >= stepSize )
+		{
+			*intensity -= stepSize;
+			if( *intensity == 0 )
+			{
+				*up = 1;
+			}
+		}
+		else
+		{
+			*up = 1;
+			*intensity = 0;
+		}
+	}
+}
+
+
 int main( void )
 {
 	// configure LED pins as outputs, disable by default
@@ -164,8 +196,13 @@ int main( void )
 
 	// initial LED intensities
 	uint8_t intensityR = 0;
-	uint8_t intensityG = 21;
-	uint8_t intensityB = 42;
+	uint8_t intensityG = 10;
+	uint8_t intensityB = 21;
+
+	// initial ramp directions
+	uint8_t upR = 1;
+	uint8_t upG = 1;
+	uint8_t upB = 1;
 
 	while( 1 )
 	{
@@ -175,10 +212,11 @@ int main( void )
 
 		setIntensity( intensityR, intensityG, intensityB );
 
-		rampUp( &intensityR, 2 );
-		rampUp( &intensityG, 1 );
-		rampUp( &intensityB, 3 );
+		rampUpDown( &intensityR, &upR, 2 );
+		rampUpDown( &intensityG, &upG, 1 );
+		rampUpDown( &intensityB, &upB, 3 );
 	}
 
 	return 0;
 }
+
