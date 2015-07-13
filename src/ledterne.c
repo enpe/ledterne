@@ -64,6 +64,10 @@ ledIntensity_t;
 
 ledIntensity_t g_intensity;
 
+// flag for updating the frame (i.e. for advancing the color animation one step)
+volatile int g_frameUpdateRequired = 0;
+
+
 /**
  * @brief Set RGB LED intensities for display
  */
@@ -91,7 +95,7 @@ void setIntensity( uint8_t r, uint8_t g, uint8_t b )
  *
  * This updates the LED outputs to achieve the currently selected intensities for each channel.
  */
-ISR( TIMER1_COMPA_vect )
+ISR( TIMER2_COMP_vect )
 {
 	static uint8_t pwmStep = 0;
 
@@ -106,21 +110,32 @@ ISR( TIMER1_COMPA_vect )
 
 
 /**
+ * @brief Interrupt handler for frame tick
+ *
+ * This signals the main program that the animations needs to be advanced one step
+ */
+ISR( TIMER1_COMPA_vect )
+{
+	g_frameUpdateRequired = 1;
+}
+
+
+/**
  * @Brief Set up timer that triggers an interrupt for every single PWM step
  */
 void pwmTimerInit()
 {
-	// prescaler for 16 bit timer: 1/1 clock frequency (i.e. no prescaler)
-	TCCR1B |= (1<<CS20);
+	// prescaler for 8 bit timer: 1/8 clock frequency
+	TCCR2 |= (1<<CS21);
 
 	// Clear Timer on Compare (CTC):
-	// reset counter TCNT1 when it reaches the value in OCRA1
-	TCCR1B |= (1<<WGM12);
+	// reset counter TCNT2 when it reaches the value in OCR2
+	TCCR2 |= (1<<WGM21);
 
 	// frequency of timer interrupts: ca. 25.6 kHz
 	//
-	//     f = F_CPU / (PRESCALER * (1 + OCR1A))
-	// OCRA1 = F_CPU / (f * PRESCALER) - 1
+	//    f = F_CPU / (PRESCALER * (1 + OCR2))
+	// OCR2 = F_CPU / (f * PRESCALER) - 1
 	//
 	// Since a complete PWM cycle consists of 256 single steps (see the PWM step counter in the
 	// associated interrupt handler) this leaves us with a PWM frequency of roughly
@@ -128,7 +143,27 @@ void pwmTimerInit()
 	// f_PWM = 25.6 kHz / 256
 	//       = 100 Hz .
 	//
-	OCR1A = 312;
+	OCR2 = 38;
+
+	// enable interrupt on reaching the reference value in OCR2
+	TIMSK |= (1<<OCIE2);
+}
+
+
+void animationTimerInit()
+{
+	// prescaler for 16 bit timer: 1/1024 clock frequency
+	TCCR1B |= (1<<CS12) | (1<<CS10);
+
+	// Clear Timer on Compare (CTC):
+	// reset counter TCNT1 when it reaches the value in OCRA1
+	TCCR1B |= (1<<WGM12);
+
+	// frequency of timer interrupts: ca. 15 Hz
+	//
+	//     f = F_CPU / (PRESCALER * (1 + OCR1A))
+	// OCRA1 = F_CPU / (f * PRESCALER) - 1
+	OCR1A = 520;
 
 	// enable interrupt on reaching the reference value in OCR1A
 	TIMSK |= (1<<OCIE1A);
@@ -187,7 +222,8 @@ int main( void )
 	PORTB &= ~( (1<<PIN_R) | (1<<PIN_G) | (1<<PIN_B) );
 
 	pwmTimerInit();
-	
+	animationTimerInit();
+
 	setIntensity( 0, 0, 0 );
 
 	// globally enable interrupts
@@ -206,15 +242,18 @@ int main( void )
 
 	while( 1 )
 	{
-		// add small delay to simulate slower frame rate
-		// TODO: replace this with a proper frame tick
-		_delay_ms( 65 );
+		if( g_frameUpdateRequired )
+		{
+			g_frameUpdateRequired = 0;
 
-		setIntensity( intensityR, intensityG, intensityB );
+			// update LED colors for display
+			setIntensity( intensityR, intensityG, intensityB );
 
-		rampUpDown( &intensityR, &upR, 2 );
-		rampUpDown( &intensityG, &upG, 1 );
-		rampUpDown( &intensityB, &upB, 3 );
+			// advance color animation one step for each color
+			rampUpDown( &intensityR, &upR, 2 );
+			rampUpDown( &intensityG, &upG, 1 );
+			rampUpDown( &intensityB, &upB, 3 );
+		}
 	}
 
 	return 0;
