@@ -125,7 +125,7 @@ void pwmTimerInit()
 	// Since a complete PWM cycle consists of 256 single steps (see the PWM step counter in the
 	// associated interrupt handler) this leaves us with a PWM frequency of roughly
 	//
-	// f_PWM = 25.5 kHz / 256
+	// f_PWM = 25.6 kHz / 256
 	//       = 100 Hz .
 	//
 	OCR1A = 312;
