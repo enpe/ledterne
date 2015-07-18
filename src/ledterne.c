@@ -1,5 +1,5 @@
 /**
- * Dim an RGB LED using software PWM
+ * Dim an array of 5 RGB LEDs using software PWM
  *
  * Platform: ATmega8 @ 8Mhz
  *
@@ -36,11 +36,32 @@
 
 
 #define MAX_INTENSITY 31
+#define NUM_PIXELS 5
 
 // LED outputs (connected to the anodes)
-#define PIN_G PB1
-#define PIN_R PB2
-#define PIN_B PB3
+#define PORT_0 PORTC
+#define PIN_G0 PC5
+#define PIN_R0 PC4
+#define PIN_B0 PC3
+#define PORT_1 PORTC
+#define PIN_G1 PC2
+#define PIN_R1 PC1
+#define PIN_B1 PC0
+#define PORT_2 PORTB
+#define PIN_G2 PB5
+#define PIN_R2 PB4
+#define PIN_B2 PB3
+#define PORT_3 PORTB
+#define PIN_G3 PB2
+#define PIN_R3 PB1
+#define PIN_B3 PB0
+#define PORT_4 PORTD
+#define PIN_G4 PD2
+#define PIN_R4 PD1
+#define PIN_B4 PD0
+
+// determine data direction register for port p
+#define DDR( p ) ( *( &p - 1 ) )
 
 
 // lookup table for converting LED intensities to PWM steps (brighter LED requires the output to
@@ -62,7 +83,7 @@ typedef struct
 }
 ledIntensity_t;
 
-ledIntensity_t g_intensity;
+ledIntensity_t g_intensity[ NUM_PIXELS ];
 
 // flag for updating the frame (i.e. for advancing the color animation one step)
 volatile int g_frameUpdateRequired = 0;
@@ -71,21 +92,26 @@ volatile int g_frameUpdateRequired = 0;
 /**
  * @brief Set RGB LED intensities for display
  */
-void setIntensity( uint8_t r, uint8_t g, uint8_t b )
+void setIntensity( uint8_t pixelIndex, uint8_t r, uint8_t g, uint8_t b )
 {
+	if( pixelIndex >= NUM_PIXELS )
+	{
+		return;
+	}
+
 	if( r <= MAX_INTENSITY )
 	{
-		g_intensity.r = g_pwm[ r ];
+		g_intensity[ pixelIndex ].r = g_pwm[ r ];
 	}
 
 	if( g <= MAX_INTENSITY )
 	{
-		g_intensity.g = g_pwm[ g ];
+		g_intensity[ pixelIndex ].g = g_pwm[ g ];
 	}
 
 	if( b <= MAX_INTENSITY )
 	{
-		g_intensity.b = g_pwm[ b ];
+		g_intensity[ pixelIndex ].b = g_pwm[ b ];
 	}
 }
 
@@ -99,9 +125,25 @@ ISR( TIMER2_COMP_vect )
 {
 	static uint8_t pwmStep = 0;
 
-	if( pwmStep < g_intensity.r ) { PORTB |= (1<<PIN_R); } else { PORTB &= ~(1<<PIN_R); }
-	if( pwmStep < g_intensity.g ) { PORTB |= (1<<PIN_G); } else { PORTB &= ~(1<<PIN_G); }
-	if( pwmStep < g_intensity.b ) { PORTB |= (1<<PIN_B); } else { PORTB &= ~(1<<PIN_B); }
+	if( pwmStep < g_intensity[ 0 ].g ) { PORT_0 |= (1<<PIN_G0); } else { PORT_0 &= ~(1<<PIN_G0); }
+	if( pwmStep < g_intensity[ 0 ].r ) { PORT_0 |= (1<<PIN_R0); } else { PORT_0 &= ~(1<<PIN_R0); }
+	if( pwmStep < g_intensity[ 0 ].b ) { PORT_0 |= (1<<PIN_B0); } else { PORT_0 &= ~(1<<PIN_B0); }
+
+	if( pwmStep < g_intensity[ 1 ].g ) { PORT_1 |= (1<<PIN_G1); } else { PORT_1 &= ~(1<<PIN_G1); }
+	if( pwmStep < g_intensity[ 1 ].r ) { PORT_1 |= (1<<PIN_R1); } else { PORT_1 &= ~(1<<PIN_R1); }
+	if( pwmStep < g_intensity[ 1 ].b ) { PORT_1 |= (1<<PIN_B1); } else { PORT_1 &= ~(1<<PIN_B1); }
+
+	if( pwmStep < g_intensity[ 2 ].g ) { PORT_2 |= (1<<PIN_G2); } else { PORT_2 &= ~(1<<PIN_G2); }
+	if( pwmStep < g_intensity[ 2 ].r ) { PORT_2 |= (1<<PIN_R2); } else { PORT_2 &= ~(1<<PIN_R2); }
+	if( pwmStep < g_intensity[ 2 ].b ) { PORT_2 |= (1<<PIN_B2); } else { PORT_2 &= ~(1<<PIN_B2); }
+
+	if( pwmStep < g_intensity[ 3 ].g ) { PORT_3 |= (1<<PIN_G3); } else { PORT_3 &= ~(1<<PIN_G3); }
+	if( pwmStep < g_intensity[ 3 ].r ) { PORT_3 |= (1<<PIN_R3); } else { PORT_3 &= ~(1<<PIN_R3); }
+	if( pwmStep < g_intensity[ 3 ].b ) { PORT_3 |= (1<<PIN_B3); } else { PORT_3 &= ~(1<<PIN_B3); }
+
+	if( pwmStep < g_intensity[ 4 ].g ) { PORT_4 |= (1<<PIN_G4); } else { PORT_4 &= ~(1<<PIN_G4); }
+	if( pwmStep < g_intensity[ 4 ].r ) { PORT_4 |= (1<<PIN_R4); } else { PORT_4 &= ~(1<<PIN_R4); }
+	if( pwmStep < g_intensity[ 4 ].b ) { PORT_4 |= (1<<PIN_B4); } else { PORT_4 &= ~(1<<PIN_B4); }
 
 	// Since it is an uint8, this counter overflows at 255. This is desired behaviour. It makes the
 	// counter run from 0 to 255, i.e. it makes a complete PWM cycle consist of 256 single steps.
@@ -218,13 +260,25 @@ void rampUpDown( uint8_t* intensity, uint8_t* up, uint8_t stepSize )
 int main( void )
 {
 	// configure LED pins as outputs, disable by default
-	DDRB  |=    (1<<PIN_R) | (1<<PIN_G) | (1<<PIN_B);
-	PORTB &= ~( (1<<PIN_R) | (1<<PIN_G) | (1<<PIN_B) );
+	DDR( PORT_0 ) |=    (1<<PIN_R0) | (1<<PIN_G0) | (1<<PIN_B0);
+	PORT_0        &= ~( (1<<PIN_R0) | (1<<PIN_G0) | (1<<PIN_B0) );
+	DDR( PORT_1 ) |=    (1<<PIN_R1) | (1<<PIN_G1) | (1<<PIN_B1);
+	PORT_1        &= ~( (1<<PIN_R1) | (1<<PIN_G1) | (1<<PIN_B1) );
+	DDR( PORT_2 ) |=    (1<<PIN_R2) | (1<<PIN_G2) | (1<<PIN_B2);
+	PORT_2        &= ~( (1<<PIN_R2) | (1<<PIN_G2) | (1<<PIN_B2) );
+	DDR( PORT_3 ) |=    (1<<PIN_R3) | (1<<PIN_G3) | (1<<PIN_B3);
+	PORT_3        &= ~( (1<<PIN_R3) | (1<<PIN_G3) | (1<<PIN_B3) );
+	DDR( PORT_4 ) |=    (1<<PIN_R4) | (1<<PIN_G4) | (1<<PIN_B4);
+	PORT_4        &= ~( (1<<PIN_R4) | (1<<PIN_G4) | (1<<PIN_B4) );
 
 	pwmTimerInit();
 	animationTimerInit();
 
-	setIntensity( 0, 0, 0 );
+	setIntensity( 0, 0, 0, 0 );
+	setIntensity( 1, 0, 0, 0 );
+	setIntensity( 2, 0, 0, 0 );
+	setIntensity( 3, 0, 0, 0 );
+	setIntensity( 4, 0, 0, 0 );
 
 	// globally enable interrupts
 	sei();
@@ -247,7 +301,11 @@ int main( void )
 			g_frameUpdateRequired = 0;
 
 			// update LED colors for display
-			setIntensity( intensityR, intensityG, intensityB );
+			setIntensity( 0, intensityR, intensityG, intensityB );
+			setIntensity( 1, intensityR, intensityG, intensityB );
+			setIntensity( 2, intensityR, intensityG, intensityB );
+			setIntensity( 3, intensityR, intensityG, intensityB );
+			setIntensity( 4, intensityR, intensityG, intensityB );
 
 			// advance color animation one step for each color
 			rampUpDown( &intensityR, &upR, 2 );
