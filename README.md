@@ -16,6 +16,25 @@
 - LEDs (e.g. RGB)
 - Software (compiler, etc.) ([mikrocontroller.net][20])
 
+## TODO
+
+- Assemble a prototype lantern for testing illumination
+	- Current plan: circular arrangement of 5 RGB LEDs
+	- Some sort of hook needs to be attached to the top
+- Experiment with LEDs
+	- Try diffusing light from the THT LEDs
+	- Measure actual forward voltages to adjust series resistors accordingly
+	- Try SMD LEDs for much wider beam angle
+- Add some interesting animations
+- Add a push button for switching between a number of animations, constant colors etc.
+	- Can use pin PD3's external interrupt capabilities instead of polling one of the other free pins
+- Make it battery-driven
+- Maybe make the PWM smarter for improved energy saving
+	- Avoid generating interrupts for every single possible step in a PWM cycle
+	- Compute only the required timeout periods for all 3×5 outputs instead
+- Maybe improve PWM resolution for smoother fading
+
+
 [0]: http://www.mikrocontroller.net/articles/AVR-Tutorial:_Equipment
 [1]: http://www.amazon.de/Atmel-Programmer-ATMEL-AVR-ISP-MKII/dp/B00CASCN2S
 [2]: http://www.ehajo.de/ateval-atmel-evaluationboard.html 
@@ -27,3 +46,4 @@
 [8]: http://www.amazon.de/Steckbrett-Breadboard-Experimentierboard-Steckplatine-Kontakte/dp/B009P04XWW
 [9]: http://www.amazon.de/ATMEGA8-16PU-Atmel-Microcontroller-MEGA-DIP-28/dp/9827046934
 [20]: http://www.mikrocontroller.net/articles/AVR_und_Linux
+
