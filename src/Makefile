@@ -85,7 +85,7 @@ PROJECTNAME=ledterne
 # (list all files to compile, e.g. 'a.c b.cpp as.S'):
 # Use .cc, .cpp or .C suffix for C++ files, use .S 
 # (NOT .s !!!) for assembly source code files.
-PRJSRC=ledterne.c
+PRJSRC=ledterne.c animations.c
 
 # additional includes (e.g. -I/path/to/mydir)
 INC=

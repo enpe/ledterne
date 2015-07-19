@@ -28,6 +28,8 @@
 #define F_CPU 8000000L
 #endif
 
+#include "animations.h"
+
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -212,51 +214,6 @@ void animationTimerInit()
 }
 
 
-void rampUp( uint8_t* intensity, uint8_t stepSize )
-{
-	*intensity = ( *intensity < ( MAX_INTENSITY + 1 - stepSize ) )
-		? *intensity + stepSize
-		: 0;
-}
-
-
-void rampUpDown( uint8_t* intensity, uint8_t* up, uint8_t stepSize )
-{
-	if( *up )
-	{
-		if( *intensity <= MAX_INTENSITY - stepSize )
-		{
-			*intensity += stepSize;
-			if( *intensity == MAX_INTENSITY )
-			{
-				*up = 0;
-			}
-		}
-		else
-		{
-			*up = 0;
-			*intensity = MAX_INTENSITY;
-		}
-	}
-	else
-	{
-		if( *intensity >= stepSize )
-		{
-			*intensity -= stepSize;
-			if( *intensity == 0 )
-			{
-				*up = 1;
-			}
-		}
-		else
-		{
-			*up = 1;
-			*intensity = 0;
-		}
-	}
-}
-
-
 int main( void )
 {
 	// configure LED pins as outputs, disable by default
@@ -308,9 +265,9 @@ int main( void )
 			setIntensity( 4, intensityR, intensityG, intensityB );
 
 			// advance color animation one step for each color
-			rampUpDown( &intensityR, &upR, 2 );
-			rampUpDown( &intensityG, &upG, 1 );
-			rampUpDown( &intensityB, &upB, 3 );
+			rampUpDown( &intensityR, &upR, MAX_INTENSITY, 2 );
+			rampUpDown( &intensityG, &upG, MAX_INTENSITY, 1 );
+			rampUpDown( &intensityB, &upB, MAX_INTENSITY, 3 );
 		}
 	}
 
