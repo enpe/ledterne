@@ -250,4 +250,104 @@ uint8_t KnightRider_execute( KnightRiderProgram* prog )
 }
 
 
+struct _ColoredConveyorProgram
+{
+	RampUpDownAnimation* ramps[ NUM_PIXELS ];
+	uint8_t r[ NUM_PIXELS ];
+	uint8_t g[ NUM_PIXELS ];
+	uint8_t b[ NUM_PIXELS ];
+	uint8_t* p[ NUM_PIXELS ];
+	uint8_t* colorList[ 3 ];
+	uint8_t colorIndex[ NUM_PIXELS ];
+	uint8_t frame;
+};
+
+ColoredConveyorProgram* ColoredConveyor_create()
+{
+	ColoredConveyorProgram* prog
+		= (ColoredConveyorProgram*) malloc( sizeof( ColoredConveyorProgram ) );
+
+	if( prog )
+	{
+		uint8_t i;
+
+		for( i = 0; i < NUM_PIXELS; i++ )
+		{
+			prog->ramps[ i ] = RampUpDown_create( MAX_INTENSITY );
+
+			// initial LED intensities
+			prog->r[ i ] = i * ( MAX_INTENSITY / ( NUM_PIXELS - 1 ) );
+			prog->g[ i ] = 0;
+			prog->b[ i ] = 0;
+
+			prog->colorIndex[ i ] = 0;
+
+			prog->p[ i ] = &prog->r[ i ];
+		}
+
+		prog->colorList[ 0 ] = prog->r;
+		prog->colorList[ 1 ] = prog->g;
+		prog->colorList[ 2 ] = prog->b;
+
+		prog->frame = 0;
+	}
+
+	return prog;
+}
+
+void ColoredConveyor_destroy( ColoredConveyorProgram* prog )
+{
+	uint8_t i;
+
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		 RampUpDown_destroy( prog->ramps[ i ] );
+	}
+
+	free( prog );
+}
+
+uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
+{
+	#define PROGRAM_LEN 56  // total number of frames in this program
+
+	uint8_t i;
+
+	// update LED colors for display
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		setIntensity( i, prog->r[ i ], prog->g[ i ], prog->b[ i ] );
+	}
+
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		// ramp up/down the colors pointed to by p
+		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 3 ) )
+		{
+			// if one complete up/down cycle has been completed, select the next color (start at
+			// beginning if we reached the color list's end)
+			prog->colorIndex[ i ] += 1;
+			if( prog->colorIndex[ i ] > 2 )
+			{
+				prog->colorIndex[ i ] = 0;
+			}
+
+			uint8_t currentColorIndex = prog->colorIndex[ i ];
+			prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
+		}
+	}
+
+	if( prog->frame < PROGRAM_LEN )
+	{
+		prog->frame += 1;
+		return 0;
+	}
+	else
+	{
+		prog->frame = 0;
+		return 1;
+	}
+}
+
+
 

@@ -8,6 +8,7 @@ enum AnimationProgram
 {
 	MixedColorBlending,
 	KnightRider,
+	ColoredConveyor,
 };
 
 typedef struct
@@ -43,6 +44,14 @@ typedef struct _KnightRiderProgram KnightRiderProgram;
 KnightRiderProgram* KnightRider_create();
 void KnightRider_destroy( KnightRiderProgram* prog );
 uint8_t KnightRider_execute( KnightRiderProgram* prog );
+
+
+struct _ColoredConveyorProgram;
+typedef struct _ColoredConveyorProgram ColoredConveyorProgram;
+
+ColoredConveyorProgram* ColoredConveyor_create();
+void ColoredConveyor_destroy( ColoredConveyorProgram* prog );
+uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog );
 
 
 #endif // ANIMATIONS_H_

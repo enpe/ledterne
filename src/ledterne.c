@@ -244,6 +244,10 @@ int main( void )
 	AnimationModule const animation[] =
 	{
 		{
+			.programType = ColoredConveyor,
+			.repetitions = 5,
+		},
+		{
 			.programType = MixedColorBlending,
 			.repetitions = 1,
 		},
@@ -302,6 +306,12 @@ int main( void )
 						currentProgram = KnightRider_create();
 						programDestroyFunc = &KnightRider_destroy;
 						programExecuteFunc = &KnightRider_execute;
+						break;
+
+					case ColoredConveyor:
+						currentProgram = ColoredConveyor_create();
+						programDestroyFunc = &ColoredConveyor_destroy;
+						programExecuteFunc = &ColoredConveyor_execute;
 						break;
 				}
 			}
