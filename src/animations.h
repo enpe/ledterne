@@ -4,6 +4,20 @@
 #include <inttypes.h>
 
 
+enum AnimationProgram
+{
+	MixedColorBlending,
+	KnightRider,
+};
+
+typedef struct
+{
+	enum AnimationProgram programType;
+	uint8_t repetitions;
+}
+AnimationModule;
+
+
 void rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize );
 
 

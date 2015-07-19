@@ -241,7 +241,26 @@ int main( void )
 	sei();
 
 
-	MixedColorBlendingProgram* prog = MixedColorBlending_create( MAX_INTENSITY );
+	AnimationModule const animation[] =
+	{
+		{
+			.programType = MixedColorBlending,
+			.repetitions = 1,
+		},
+		{
+			.programType = KnightRider,
+			.repetitions = 2,
+		},
+	};
+
+	// compute number of modules in the animation
+	uint8_t numModules = sizeof( animation ) / sizeof( AnimationModule );
+
+	uint8_t currentModuleIndex = numModules - 1; // HACK: needed to start with the first module
+	uint8_t repetitions = 0;
+	AnimationModule const* currentModule = NULL;
+	void* currentProgram = NULL;
+
 
 	while( 1 )
 	{
@@ -249,7 +268,64 @@ int main( void )
 		{
 			g_frameUpdateRequired = 0;
 
-			MixedColorBlending_execute( prog );
+			// load next module if the current one has finished playing completely
+			if( repetitions == 0 )
+			{
+				// destroy the previous module's program if one exists
+				if( currentModule && currentProgram )
+				{
+					switch( currentModule->programType )
+					{
+						case MixedColorBlending:
+							MixedColorBlending_destroy( currentProgram );
+							break;
+
+						case KnightRider:
+							KnightRider_destroy( currentProgram );
+							break;
+					}
+				}
+
+				// select next module (start at beginning if we reached the module list's end)
+				currentModuleIndex += 1;
+				if( currentModuleIndex == numModules )
+				{
+					currentModuleIndex = 0;
+				}
+
+				currentModule = &animation[ currentModuleIndex ];
+				repetitions = currentModule->repetitions;
+
+				// instantiate the current module's program
+				switch( currentModule->programType )
+				{
+					case MixedColorBlending:
+						currentProgram = MixedColorBlending_create( MAX_INTENSITY );
+						break;
+
+					case KnightRider:
+						currentProgram = KnightRider_create();
+						break;
+				}
+			}
+
+			// execute the current module's program
+			uint8_t programFinished = 0;
+			switch( currentModule->programType )
+			{
+				case MixedColorBlending:
+					programFinished = MixedColorBlending_execute( currentProgram );
+					break;
+
+				case KnightRider:
+					programFinished = KnightRider_execute( currentProgram );
+					break;
+			}
+
+			if( programFinished )
+			{
+				repetitions -= 1;
+			}
 		}
 	}
 
