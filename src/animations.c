@@ -124,7 +124,7 @@ uint8_t MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 {
 	// NOTE: This is just an arbitrary (relatively small) number to end the program at some defined
 	//       point. The actual animation does only loop much later.
-	#define PROGRAM_LEN 100  // total number of frames in this program
+	static uint8_t const programLen = 100;  // total number of frames in this program
 
 	uint8_t i;
 
@@ -139,7 +139,7 @@ uint8_t MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 	RampUpDown_step( prog->aniG, &prog->g, 1 );
 	RampUpDown_step( prog->aniB, &prog->b, 3 );
 
-	if( prog->frame < PROGRAM_LEN )
+	if( prog->frame < programLen )
 	{
 		prog->frame += 1;
 		return 0;
@@ -309,7 +309,7 @@ void ColoredConveyor_destroy( ColoredConveyorProgram* prog )
 
 uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 {
-	#define PROGRAM_LEN 56  // total number of frames in this program
+	static uint8_t const programLen = 56;  // total number of frames in this program
 
 	uint8_t i;
 
@@ -337,7 +337,7 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		}
 	}
 
-	if( prog->frame < PROGRAM_LEN )
+	if( prog->frame < programLen )
 	{
 		prog->frame += 1;
 		return 0;
