@@ -26,7 +26,7 @@ typedef struct _RampUpDownAnimation RampUpDownAnimation;
 
 RampUpDownAnimation* RampUpDown_create( uint8_t maxValue );
 void RampUpDown_destroy( RampUpDownAnimation* ani );
-void RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize );
+uint8_t RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize );
 
 
 struct _MixedColorBlendingProgram;

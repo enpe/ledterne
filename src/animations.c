@@ -37,7 +37,8 @@ void RampUpDown_destroy( RampUpDownAnimation* ani )
 	free( ani );
 }
 
-void RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize )
+// return 1 if one complete cycle (first up, then down) has been completed
+uint8_t RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize )
 {
 	if( ani->up )
 	{
@@ -63,14 +64,18 @@ void RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize
 			if( *value == 0 )
 			{
 				ani->up = 1;
+				return 1;
 			}
 		}
 		else
 		{
 			ani->up = 1;
 			*value = 0;
+			return 1;
 		}
 	}
+
+	return 0;
 }
 
 
