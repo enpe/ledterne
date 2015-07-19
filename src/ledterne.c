@@ -231,11 +231,13 @@ int main( void )
 	pwmTimerInit();
 	animationTimerInit();
 
-	setIntensity( 0, 0, 0, 0 );
-	setIntensity( 1, 0, 0, 0 );
-	setIntensity( 2, 0, 0, 0 );
-	setIntensity( 3, 0, 0, 0 );
-	setIntensity( 4, 0, 0, 0 );
+	uint8_t i;
+
+	// intially switch all pixels off
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		setIntensity( i, 0, 0, 0 );
+	}
 
 	// globally enable interrupts
 	sei();
@@ -256,11 +258,10 @@ int main( void )
 			MixedColorBlending_getColor( ani, &intensityR, &intensityG, &intensityB );
 
 			// update LED colors for display
-			setIntensity( 0, intensityR, intensityG, intensityB );
-			setIntensity( 1, intensityR, intensityG, intensityB );
-			setIntensity( 2, intensityR, intensityG, intensityB );
-			setIntensity( 3, intensityR, intensityG, intensityB );
-			setIntensity( 4, intensityR, intensityG, intensityB );
+			for( i = 0; i < NUM_PIXELS; i++ )
+			{
+				setIntensity( i, intensityR, intensityG, intensityB );
+			}
 
 			// advance color animation one step
 			MixedColorBlending_step( ani );
