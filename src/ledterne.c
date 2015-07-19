@@ -241,20 +241,19 @@ int main( void )
 	sei();
 
 
-	RampUpDownAnimation* aniR = RampUpDown_create( MAX_INTENSITY );
-	RampUpDownAnimation* aniG = RampUpDown_create( MAX_INTENSITY );
-	RampUpDownAnimation* aniB = RampUpDown_create( MAX_INTENSITY );
-
-	// initial LED intensities
-	uint8_t intensityR = 0;
-	uint8_t intensityG = 10;
-	uint8_t intensityB = 21;
+	MixedColorBlendingAnimation* ani = MixedColorBlending_create( MAX_INTENSITY );
 
 	while( 1 )
 	{
 		if( g_frameUpdateRequired )
 		{
 			g_frameUpdateRequired = 0;
+
+			// get current color state from animation
+			uint8_t intensityR;
+			uint8_t intensityG;
+			uint8_t intensityB;
+			MixedColorBlending_getColor( ani, &intensityR, &intensityG, &intensityB );
 
 			// update LED colors for display
 			setIntensity( 0, intensityR, intensityG, intensityB );
@@ -263,10 +262,8 @@ int main( void )
 			setIntensity( 3, intensityR, intensityG, intensityB );
 			setIntensity( 4, intensityR, intensityG, intensityB );
 
-			// advance color animation one step for each color
-			RampUpDown_step( aniR, &intensityR, 2 );
-			RampUpDown_step( aniG, &intensityG, 1 );
-			RampUpDown_step( aniB, &intensityB, 3 );
+			// advance color animation one step
+			MixedColorBlending_step( ani );
 		}
 	}
 
