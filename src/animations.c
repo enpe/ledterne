@@ -1,5 +1,7 @@
 #include "animations.h"
 
+#include <stdlib.h>
+
 
 void rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize )
 {
@@ -9,22 +11,46 @@ void rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize )
 }
 
 
-void rampUpDown( uint8_t* value, uint8_t* up, uint8_t maxValue, uint8_t stepSize )
+struct _RampUpDownAnimation
 {
-	if( *up )
+	uint8_t maxValue;
+	uint8_t up;
+};
+
+RampUpDownAnimation* RampUpDown_create( uint8_t maxValue )
+{
+	RampUpDownAnimation* ani = (RampUpDownAnimation*) malloc( sizeof( RampUpDownAnimation ) );
+
+	if( ani )
 	{
-		if( *value <= maxValue - stepSize )
+		ani->maxValue = maxValue;
+		ani->up       = 1;
+	}
+
+	return ani;
+}
+
+void RampUpDown_destroy( RampUpDownAnimation* ani )
+{
+	free( ani );
+}
+
+void RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize )
+{
+	if( ani->up )
+	{
+		if( *value <= ani->maxValue - stepSize )
 		{
 			*value += stepSize;
-			if( *value == maxValue )
+			if( *value == ani->maxValue )
 			{
-				*up = 0;
+				ani->up = 0;
 			}
 		}
 		else
 		{
-			*up = 0;
-			*value = maxValue;
+			ani->up = 0;
+			*value = ani->maxValue;
 		}
 	}
 	else
@@ -34,12 +60,12 @@ void rampUpDown( uint8_t* value, uint8_t* up, uint8_t maxValue, uint8_t stepSize
 			*value -= stepSize;
 			if( *value == 0 )
 			{
-				*up = 1;
+				ani->up = 1;
 			}
 		}
 		else
 		{
-			*up = 1;
+			ani->up = 1;
 			*value = 0;
 		}
 	}

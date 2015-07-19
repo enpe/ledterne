@@ -241,15 +241,14 @@ int main( void )
 	sei();
 
 
+	RampUpDownAnimation* aniR = RampUpDown_create( MAX_INTENSITY );
+	RampUpDownAnimation* aniG = RampUpDown_create( MAX_INTENSITY );
+	RampUpDownAnimation* aniB = RampUpDown_create( MAX_INTENSITY );
+
 	// initial LED intensities
 	uint8_t intensityR = 0;
 	uint8_t intensityG = 10;
 	uint8_t intensityB = 21;
-
-	// initial ramp directions
-	uint8_t upR = 1;
-	uint8_t upG = 1;
-	uint8_t upB = 1;
 
 	while( 1 )
 	{
@@ -265,9 +264,9 @@ int main( void )
 			setIntensity( 4, intensityR, intensityG, intensityB );
 
 			// advance color animation one step for each color
-			rampUpDown( &intensityR, &upR, MAX_INTENSITY, 2 );
-			rampUpDown( &intensityG, &upG, MAX_INTENSITY, 1 );
-			rampUpDown( &intensityB, &upB, MAX_INTENSITY, 3 );
+			RampUpDown_step( aniR, &intensityR, 2 );
+			RampUpDown_step( aniG, &intensityG, 1 );
+			RampUpDown_step( aniB, &intensityB, 3 );
 		}
 	}
 
