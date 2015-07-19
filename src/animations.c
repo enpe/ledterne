@@ -193,7 +193,13 @@ uint8_t KnightRider_execute( KnightRiderProgram* prog )
 	#define PROGRAM_TOTAL_LEN 25     // total number of frames in this program
 	#define PROGRAM_MOVEMENT_LEN 17  // number of frames that the moving center pixel is animated
 
-	static uint8_t fadeIntensities[ NUM_FADE_STATES ] = { 0, 5, 22, 31 };
+	static uint8_t fadeIntensities[ NUM_FADE_STATES ] =
+	{
+		0.000 * MAX_INTENSITY,
+		0.162 * MAX_INTENSITY,
+		0.710 * MAX_INTENSITY,
+		1.000 * MAX_INTENSITY,
+	};
 
 	uint8_t lightCenterPixel = prog->frame < PROGRAM_MOVEMENT_LEN;
 	uint8_t i;
