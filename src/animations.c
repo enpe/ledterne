@@ -2,6 +2,7 @@
 #include "ledterne.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 
 void rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize )
@@ -126,6 +127,95 @@ void MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 	RampUpDown_step( prog->aniG, &prog->g, 1 );
 	RampUpDown_step( prog->aniB, &prog->b, 3 );
 
+}
+
+
+struct _KnightRiderProgram
+{
+	RampUpDownAnimation* ramp;
+	uint8_t centerIndex;
+	uint8_t frame;
+	uint8_t fadeState[ NUM_PIXELS ];
+};
+
+KnightRiderProgram* KnightRider_create()
+{
+	KnightRiderProgram* prog = (KnightRiderProgram*) malloc( sizeof( KnightRiderProgram ) );
+
+	if( prog )
+	{
+		prog->ramp = RampUpDown_create( NUM_PIXELS - 1 );
+		prog->centerIndex = 0;
+		prog->frame = 0;
+		memset( prog->fadeState, 0, sizeof( prog->fadeState ) );
+	}
+
+	return prog;
+}
+
+void KnightRider_destroy( KnightRiderProgram* prog )
+{
+	RampUpDown_destroy( prog->ramp );
+	free( prog );
+}
+
+/**
+ * The basic idea is this: Let a pixel (called "center pixel") bounce back and forth using an
+ * up/down ramp animation which determines the current center position. This center pixel is always
+ * at maximum brightness while the other pixels slowly fade from their previous brightness down to
+ * zero brightness. Since being the current center pixel is the only way to light up an unlit pixel,
+ * the center pixel will automatically drag a tail of fading pixels behind it.
+ *
+ * The actual program is a couple of frames longer than the actual animation of the moving center
+ * pixel. This will create a short pause in the bouncing and fading animation in which the LEDs can
+ * fade to zero and remain completely off for a couple of frames before the next iteration starts.
+ */
+void KnightRider_execute( KnightRiderProgram* prog )
+{
+	#define NUM_FADE_STATES 4
+	#define PROGRAM_TOTAL_LEN 25     // total number of frames in this program
+	#define PROGRAM_MOVEMENT_LEN 17  // number of frames that the moving center pixel is animated
+
+	static uint8_t fadeIntensities[ NUM_FADE_STATES ] = { 0, 5, 22, 31 };
+
+	uint8_t lightCenterPixel = prog->frame < PROGRAM_MOVEMENT_LEN;
+	uint8_t i;
+
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		if( lightCenterPixel && ( i == prog->centerIndex ) )
+		{
+			// switch on the current center pixel
+			prog->fadeState[ i ] = NUM_FADE_STATES - 1;
+		}
+		else
+		{
+			// fade out the other pixels
+			if( prog->fadeState[ i ] > 0 )
+			{
+				prog->fadeState[ i ] -= 1;
+			}
+		}
+
+		// make LEDs light up red only
+		setIntensity( i, fadeIntensities[ prog->fadeState[ i ] ], 0, 0 );
+	}
+
+	// advance center position one step
+	RampUpDown_step( prog->ramp, &prog->centerIndex, 1 );
+
+	if( prog->frame < PROGRAM_TOTAL_LEN )
+	{
+		prog->frame += 1;
+	}
+	else
+	{
+		prog->frame = 0;
+		prog->centerIndex = 0;
+
+		// NOTE: If we want to be really tidy, we should reset the ramp and the fade states here to
+		//       allow for arbitrary program lengths and animations lengths.
+	}
 }
 
 
