@@ -261,6 +261,8 @@ int main( void )
 	AnimationModule const* currentModule = NULL;
 	void* currentProgram = NULL;
 
+	void (*programDestroyFunc)( void* ) = NULL;
+	uint8_t (*programExecuteFunc)( void* ) = NULL;
 
 	while( 1 )
 	{
@@ -272,18 +274,9 @@ int main( void )
 			if( repetitions == 0 )
 			{
 				// destroy the previous module's program if one exists
-				if( currentModule && currentProgram )
+				if( currentProgram )
 				{
-					switch( currentModule->programType )
-					{
-						case MixedColorBlending:
-							MixedColorBlending_destroy( currentProgram );
-							break;
-
-						case KnightRider:
-							KnightRider_destroy( currentProgram );
-							break;
-					}
+					(*programDestroyFunc)( currentProgram );
 				}
 
 				// select next module (start at beginning if we reached the module list's end)
@@ -301,26 +294,21 @@ int main( void )
 				{
 					case MixedColorBlending:
 						currentProgram = MixedColorBlending_create( MAX_INTENSITY );
+						programDestroyFunc = &MixedColorBlending_destroy;
+						programExecuteFunc = &MixedColorBlending_execute;
 						break;
 
 					case KnightRider:
 						currentProgram = KnightRider_create();
+						programDestroyFunc = &KnightRider_destroy;
+						programExecuteFunc = &KnightRider_execute;
 						break;
 				}
 			}
 
 			// execute the current module's program
-			uint8_t programFinished = 0;
-			switch( currentModule->programType )
-			{
-				case MixedColorBlending:
-					programFinished = MixedColorBlending_execute( currentProgram );
-					break;
+			uint8_t programFinished = (*programExecuteFunc)( currentProgram );
 
-				case KnightRider:
-					programFinished = KnightRider_execute( currentProgram );
-					break;
-			}
 
 			if( programFinished )
 			{
