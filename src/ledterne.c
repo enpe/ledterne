@@ -29,6 +29,7 @@
 #endif
 
 #include "animations.h"
+#include "ledterne.h"
 
 #include <inttypes.h>
 #include <avr/io.h>
@@ -36,9 +37,6 @@
 #include <string.h>
 #include <util/delay.h>
 
-
-#define MAX_INTENSITY 31
-#define NUM_PIXELS 5
 
 // LED outputs (connected to the anodes)
 #define PORT_0 PORTC
@@ -243,7 +241,7 @@ int main( void )
 	sei();
 
 
-	MixedColorBlendingAnimation* ani = MixedColorBlending_create( MAX_INTENSITY );
+	MixedColorBlendingProgram* prog = MixedColorBlending_create( MAX_INTENSITY );
 
 	while( 1 )
 	{
@@ -251,20 +249,7 @@ int main( void )
 		{
 			g_frameUpdateRequired = 0;
 
-			// get current color state from animation
-			uint8_t intensityR;
-			uint8_t intensityG;
-			uint8_t intensityB;
-			MixedColorBlending_getColor( ani, &intensityR, &intensityG, &intensityB );
-
-			// update LED colors for display
-			for( i = 0; i < NUM_PIXELS; i++ )
-			{
-				setIntensity( i, intensityR, intensityG, intensityB );
-			}
-
-			// advance color animation one step
-			MixedColorBlending_step( ani );
+			MixedColorBlending_execute( prog );
 		}
 	}
 

@@ -1,4 +1,5 @@
 #include "animations.h"
+#include "ledterne.h"
 
 #include <stdlib.h>
 
@@ -72,7 +73,7 @@ void RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize
 }
 
 
-struct _MixedColorBlendingAnimation
+struct _MixedColorBlendingProgram
 {
 	RampUpDownAnimation* aniR;
 	RampUpDownAnimation* aniG;
@@ -82,49 +83,49 @@ struct _MixedColorBlendingAnimation
 	uint8_t b;
 };
 
-MixedColorBlendingAnimation* MixedColorBlending_create( uint8_t maxValue )
+MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue )
 {
-	MixedColorBlendingAnimation* ani
-		= (MixedColorBlendingAnimation*) malloc( sizeof( MixedColorBlendingAnimation ) );
+	MixedColorBlendingProgram* prog
+		= (MixedColorBlendingProgram*) malloc( sizeof( MixedColorBlendingProgram ) );
 
-	if( ani )
+	if( prog )
 	{
-		ani->aniR = RampUpDown_create( maxValue );
-		ani->aniG = RampUpDown_create( maxValue );
-		ani->aniB = RampUpDown_create( maxValue );
+		prog->aniR = RampUpDown_create( maxValue );
+		prog->aniG = RampUpDown_create( maxValue );
+		prog->aniB = RampUpDown_create( maxValue );
 
 		// intial LED intensities
-		ani->r =  0;
-		ani->g = 10;
-		ani->b = 21;
+		prog->r =  0;
+		prog->g = 10;
+		prog->b = 21;
 	}
 
-	return ani;
+	return prog;
 }
 
-void MixedColorBlending_destroy( MixedColorBlendingAnimation* ani )
+void MixedColorBlending_destroy( MixedColorBlendingProgram* prog )
 {
-	RampUpDown_destroy( ani->aniR );
-	RampUpDown_destroy( ani->aniG );
-	RampUpDown_destroy( ani->aniB );
-	free( ani );
+	RampUpDown_destroy( prog->aniR );
+	RampUpDown_destroy( prog->aniG );
+	RampUpDown_destroy( prog->aniB );
+	free( prog );
 }
 
-void MixedColorBlending_step( MixedColorBlendingAnimation* ani )
+void MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 {
-	RampUpDown_step( ani->aniR, &ani->r, 2 );
-	RampUpDown_step( ani->aniG, &ani->g, 1 );
-	RampUpDown_step( ani->aniB, &ani->b, 3 );
-}
+	uint8_t i;
 
-void MixedColorBlending_getColor( MixedColorBlendingAnimation const* ani, uint8_t* r, uint8_t* g, uint8_t* b )
-{
-	if( ani )
+	// update LED colors for display
+	for( i = 0; i < NUM_PIXELS; i++ )
 	{
-		*r = ani->r;
-		*g = ani->g;
-		*b = ani->b;
+		setIntensity( i, prog->r, prog->g, prog->b );
 	}
+
+	// advance color animation one step
+	RampUpDown_step( prog->aniR, &prog->r, 2 );
+	RampUpDown_step( prog->aniG, &prog->g, 1 );
+	RampUpDown_step( prog->aniB, &prog->b, 3 );
+
 }
 
 

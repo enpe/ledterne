@@ -15,13 +15,12 @@ void RampUpDown_destroy( RampUpDownAnimation* ani );
 void RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize );
 
 
-struct _MixedColorBlendingAnimation;
-typedef struct _MixedColorBlendingAnimation MixedColorBlendingAnimation;
+struct _MixedColorBlendingProgram;
+typedef struct _MixedColorBlendingProgram MixedColorBlendingProgram;
 
-MixedColorBlendingAnimation* MixedColorBlending_create( uint8_t maxValue );
-void MixedColorBlending_destroy( MixedColorBlendingAnimation* ani );
-void MixedColorBlending_step( MixedColorBlendingAnimation* ani );
-void MixedColorBlending_getColor( MixedColorBlendingAnimation const* ani, uint8_t* r, uint8_t* g, uint8_t* b );
+MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue );
+void MixedColorBlending_destroy( MixedColorBlendingProgram* prog );
+void MixedColorBlending_execute( MixedColorBlendingProgram* prog );
 
 
 #endif // ANIMATIONS_H_
