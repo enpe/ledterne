@@ -90,16 +90,16 @@ struct _MixedColorBlendingProgram
 	uint8_t frame;
 };
 
-MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue )
+MixedColorBlendingProgram* MixedColorBlending_create()
 {
 	MixedColorBlendingProgram* prog
 		= (MixedColorBlendingProgram*) malloc( sizeof( MixedColorBlendingProgram ) );
 
 	if( prog )
 	{
-		prog->aniR = RampUpDown_create( maxValue );
-		prog->aniG = RampUpDown_create( maxValue );
-		prog->aniB = RampUpDown_create( maxValue );
+		prog->aniR = RampUpDown_create( MAX_INTENSITY );
+		prog->aniG = RampUpDown_create( MAX_INTENSITY );
+		prog->aniB = RampUpDown_create( MAX_INTENSITY );
 
 		// intial LED intensities
 		prog->r =  0;

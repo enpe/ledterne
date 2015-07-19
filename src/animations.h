@@ -33,7 +33,7 @@ uint8_t RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepS
 struct _MixedColorBlendingProgram;
 typedef struct _MixedColorBlendingProgram MixedColorBlendingProgram;
 
-MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue );
+MixedColorBlendingProgram* MixedColorBlending_create();
 void MixedColorBlending_destroy( MixedColorBlendingProgram* prog );
 uint8_t MixedColorBlending_execute( MixedColorBlendingProgram* prog );
 

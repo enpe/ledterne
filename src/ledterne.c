@@ -297,7 +297,7 @@ int main( void )
 				switch( currentModule->programType )
 				{
 					case MixedColorBlending:
-						currentProgram = MixedColorBlending_create( MAX_INTENSITY );
+						currentProgram = MixedColorBlending_create();
 						programDestroyFunc = &MixedColorBlending_destroy;
 						programExecuteFunc = &MixedColorBlending_execute;
 						break;
