@@ -20,7 +20,7 @@ typedef struct _MixedColorBlendingProgram MixedColorBlendingProgram;
 
 MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue );
 void MixedColorBlending_destroy( MixedColorBlendingProgram* prog );
-void MixedColorBlending_execute( MixedColorBlendingProgram* prog );
+uint8_t MixedColorBlending_execute( MixedColorBlendingProgram* prog );
 
 
 struct _KnightRiderProgram;
@@ -28,7 +28,7 @@ typedef struct _KnightRiderProgram KnightRiderProgram;
 
 KnightRiderProgram* KnightRider_create();
 void KnightRider_destroy( KnightRiderProgram* prog );
-void KnightRider_execute( KnightRiderProgram* prog );
+uint8_t KnightRider_execute( KnightRiderProgram* prog );
 
 
 #endif // ANIMATIONS_H_

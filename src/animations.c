@@ -82,6 +82,7 @@ struct _MixedColorBlendingProgram
 	uint8_t r;
 	uint8_t g;
 	uint8_t b;
+	uint8_t frame;
 };
 
 MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue )
@@ -99,6 +100,8 @@ MixedColorBlendingProgram* MixedColorBlending_create( uint8_t maxValue )
 		prog->r =  0;
 		prog->g = 10;
 		prog->b = 21;
+
+		prog->frame = 0;
 	}
 
 	return prog;
@@ -112,8 +115,12 @@ void MixedColorBlending_destroy( MixedColorBlendingProgram* prog )
 	free( prog );
 }
 
-void MixedColorBlending_execute( MixedColorBlendingProgram* prog )
+uint8_t MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 {
+	// NOTE: This is just an arbitrary (relatively small) number to end the program at some defined
+	//       point. The actual animation does only loop much later.
+	#define PROGRAM_LEN 100  // total number of frames in this program
+
 	uint8_t i;
 
 	// update LED colors for display
@@ -127,6 +134,16 @@ void MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 	RampUpDown_step( prog->aniG, &prog->g, 1 );
 	RampUpDown_step( prog->aniB, &prog->b, 3 );
 
+	if( prog->frame < PROGRAM_LEN )
+	{
+		prog->frame += 1;
+		return 0;
+	}
+	else
+	{
+		prog->frame = 0;
+		return 1;
+	}
 }
 
 
@@ -170,7 +187,7 @@ void KnightRider_destroy( KnightRiderProgram* prog )
  * pixel. This will create a short pause in the bouncing and fading animation in which the LEDs can
  * fade to zero and remain completely off for a couple of frames before the next iteration starts.
  */
-void KnightRider_execute( KnightRiderProgram* prog )
+uint8_t KnightRider_execute( KnightRiderProgram* prog )
 {
 	#define NUM_FADE_STATES 4
 	#define PROGRAM_TOTAL_LEN 25     // total number of frames in this program
@@ -207,6 +224,7 @@ void KnightRider_execute( KnightRiderProgram* prog )
 	if( prog->frame < PROGRAM_TOTAL_LEN )
 	{
 		prog->frame += 1;
+		return 0;
 	}
 	else
 	{
@@ -215,6 +233,8 @@ void KnightRider_execute( KnightRiderProgram* prog )
 
 		// NOTE: If we want to be really tidy, we should reset the ramp and the fade states here to
 		//       allow for arbitrary program lengths and animations lengths.
+
+		return 1;
 	}
 }
 
