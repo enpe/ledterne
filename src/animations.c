@@ -147,16 +147,8 @@ uint8_t MixedColorBlending_execute( MixedColorBlendingProgram* prog )
 	RampUpDown_step( prog->aniG, &prog->g, 1 );
 	RampUpDown_step( prog->aniB, &prog->b, 3 );
 
-	if( prog->frame < programLen )
-	{
-		prog->frame += 1;
-		return 0;
-	}
-	else
-	{
-		prog->frame = 0;
-		return 1;
-	}
+	// advance frame counter (automatically wraps around)
+	return rampUp( &prog->frame, programLen - 1, 1 );
 }
 
 
@@ -341,16 +333,8 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		}
 	}
 
-	if( prog->frame < programLen )
-	{
-		prog->frame += 1;
-		return 0;
-	}
-	else
-	{
-		prog->frame = 0;
-		return 1;
-	}
+	// advance frame counter (automatically wraps around)
+	return rampUp( &prog->frame, programLen - 1, 1 );
 }
 
 
