@@ -158,6 +158,7 @@ struct _KnightRiderProgram
 	uint8_t centerIndex;
 	uint8_t frame;
 	uint8_t fadeState[ NUM_PIXELS ];
+	uint8_t updateAnimation;
 };
 
 KnightRiderProgram* KnightRider_create()
@@ -170,6 +171,7 @@ KnightRiderProgram* KnightRider_create()
 		prog->centerIndex = 0;
 		prog->frame = 0;
 		memset( prog->fadeState, 0, sizeof( prog->fadeState ) );
+		prog->updateAnimation = 1;
 	}
 
 	return prog;
@@ -205,6 +207,13 @@ uint8_t KnightRider_execute( KnightRiderProgram* prog )
 		0.710 * MAX_INTENSITY,
 		1.000 * MAX_INTENSITY,
 	};
+
+	// update the animation on ever second call only (this effectively halves the frame rate)
+	prog->updateAnimation = ! prog->updateAnimation;
+	if( prog->updateAnimation )
+	{
+		return 0;
+	}
 
 	uint8_t lightCenterPixel = prog->frame < PROGRAM_MOVEMENT_LEN;
 	uint8_t i;
