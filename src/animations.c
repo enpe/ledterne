@@ -326,11 +326,7 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		{
 			// if one complete up/down cycle has been completed, select the next color (start at
 			// beginning if we reached the color list's end)
-			prog->colorIndex[ i ] += 1;
-			if( prog->colorIndex[ i ] > 2 )
-			{
-				prog->colorIndex[ i ] = 0;
-			}
+			rampUp( &prog->colorIndex[ i ], 2, 1 );
 
 			uint8_t currentColorIndex = prog->colorIndex[ i ];
 			prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
