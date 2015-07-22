@@ -19,7 +19,7 @@ typedef struct
 AnimationModule;
 
 
-void rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize );
+uint8_t rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize );
 
 
 struct _RampUpDownAnimation;

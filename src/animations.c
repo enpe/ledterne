@@ -5,11 +5,19 @@
 #include <string.h>
 
 
-void rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize )
+// return 1 if one cycle has been completed
+uint8_t rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize )
 {
-	*value = ( *value < ( maxValue + 1 - stepSize ) )
-		? *value + stepSize
-		: 0;
+	if( *value < ( maxValue + 1 - stepSize ) )
+	{
+		*value += stepSize;
+		return 0;
+	}
+	else
+	{
+		*value = 0;
+		return 1;
+	}
 }
 
 
