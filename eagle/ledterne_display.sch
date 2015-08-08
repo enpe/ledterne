@@ -3785,7 +3785,6 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <sheets>
 <sheet>
 <plain>
-<text x="35.56" y="96.52" size="1.778" layer="97">TODO: name pins (GND, R, G, B)</text>
 </plain>
 <instances>
 <instance part="LED1" gate="G$1" x="20.32" y="71.12"/>
@@ -3845,7 +3844,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 </net>
-<net name="N$4" class="0">
+<net name="LED_R" class="0">
 <segment>
 <pinref part="JP1" gate="A" pin="1"/>
 <pinref part="R1" gate="G$1" pin="2"/>
@@ -3853,7 +3852,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <wire x1="15.24" y1="91.44" x2="15.24" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$5" class="0">
+<net name="LED_G" class="0">
 <segment>
 <pinref part="JP1" gate="A" pin="2"/>
 <pinref part="R2" gate="G$1" pin="2"/>
@@ -3861,7 +3860,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <wire x1="20.32" y1="93.98" x2="20.32" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$6" class="0">
+<net name="LED_B" class="0">
 <segment>
 <pinref part="JP1" gate="A" pin="3"/>
 <pinref part="R3" gate="G$1" pin="2"/>
