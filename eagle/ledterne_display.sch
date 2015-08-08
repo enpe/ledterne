@@ -3794,8 +3794,8 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <instance part="GND1" gate="1" x="20.32" y="63.5"/>
 <instance part="GND2" gate="1" x="15.24" y="63.5"/>
 <instance part="GND3" gate="1" x="25.4" y="63.5"/>
-<instance part="JP1" gate="A" x="5.08" y="96.52" rot="R180"/>
-<instance part="GND4" gate="1" x="33.02" y="91.44"/>
+<instance part="JP1" gate="A" x="-2.54" y="91.44" rot="MR0"/>
+<instance part="GND4" gate="1" x="7.62" y="83.82"/>
 </instances>
 <busses>
 </busses>
@@ -3839,33 +3839,33 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </segment>
 <segment>
 <pinref part="JP1" gate="A" pin="4"/>
-<wire x1="7.62" y1="99.06" x2="33.02" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="99.06" x2="33.02" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="0" y1="88.9" x2="7.62" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="88.9" x2="7.62" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="LED_R" class="0">
 <segment>
-<pinref part="JP1" gate="A" pin="1"/>
 <pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="7.62" y1="91.44" x2="15.24" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="91.44" x2="15.24" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="3"/>
+<wire x1="0" y1="91.44" x2="15.24" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="LED_G" class="0">
 <segment>
 <pinref part="JP1" gate="A" pin="2"/>
 <pinref part="R2" gate="G$1" pin="2"/>
-<wire x1="7.62" y1="93.98" x2="20.32" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="0" y1="93.98" x2="20.32" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="93.98" x2="20.32" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="LED_B" class="0">
 <segment>
-<pinref part="JP1" gate="A" pin="3"/>
 <pinref part="R3" gate="G$1" pin="2"/>
-<wire x1="7.62" y1="96.52" x2="25.4" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="96.52" x2="25.4" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="1"/>
+<wire x1="0" y1="96.52" x2="25.4" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
