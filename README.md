@@ -30,8 +30,13 @@
 	- Can use pin PD3's external interrupt capabilities instead of polling one of the other free pins
 - Make it battery-driven
 - Maybe make the PWM smarter for improved energy saving
-	- Avoid generating interrupts for every single possible step in a PWM cycle
-	- Compute only the required timeout periods for all 3×5 outputs instead
+	- Alternative 1:
+		- Avoid generating interrupts for every single possible step in a PWM cycle
+		- Compute only the required timeout periods for all 3×5 outputs instead
+	- Alternative 2 (easier than 1):
+		- Avoid generating interrupts for every single possible step in a PWM cycle
+		- Compute only the required timeout periods for all (currently 32) different duty cycles that we actually use
+		- This is not as efficient as alternative 1, but it is much simpler to implement since it is not data-dependent (does not change with the desired LED brightness (i.e. with the animations))
 - Maybe improve PWM resolution for smoother fading
 
 
