@@ -18,13 +18,10 @@
 
 ## TODO
 
-- Assemble a prototype lantern for testing illumination
-	- Current plan: circular arrangement of 5 RGB LEDs
-	- Some sort of hook needs to be attached to the top
+- Add EAGLE schematic and board of the prototype lantern
 - Experiment with LEDs
-	- Try diffusing light from the THT LEDs
-	- Measure actual forward voltages to adjust series resistors accordingly
-	- Try SMD LEDs for much wider beam angle
+	- Adjust series resistors for balanced LED brightness of the different colors
+	- Try diffusing light from the LEDs
 - Add some interesting animations
 - Add a push button for switching between a number of animations, constant colors etc.
 	- Can use pin PD3's external interrupt capabilities instead of polling one of the other free pins
