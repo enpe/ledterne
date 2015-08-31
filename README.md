@@ -35,6 +35,9 @@
 		- Compute only the required timeout periods for all (currently 32) different duty cycles that we actually use
 		- This is not as efficient as alternative 1, but it is much simpler to implement since it is not data-dependent (does not change with the desired LED brightness (i.e. with the animations))
 - Maybe improve PWM resolution for smoother fading
+- Maybe implement the animations using coroutines/generators instead of letting the animation do the diplay update
+	- https://en.wikipedia.org/wiki/Generator_%28computer_science%29
+	- http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html
 
 
 [0]: http://www.mikrocontroller.net/articles/AVR-Tutorial:_Equipment
