@@ -60,6 +60,32 @@
 #define PIN_R4 PD1
 #define PIN_B4 PD0
 
+// PC0 -> PA0
+// PC1 -> PA1
+// PC2 -> PA2
+// PC3 -> PA3
+// PC4 -> PA4
+// PC5 -> PA5
+// PC6 -- reset
+
+// PD0 -> PD0
+// PD1 -> PD1
+// PD2 -> PD2
+// PD3 -> PD3
+// PD4 -> PD4
+// PD5 -> PD5
+// PD6 -> PD6
+// PD7 -> PD7
+
+// PB0 -> PB2
+// PB1 -> PB3
+// PB2 -> PB4
+// PB3 -> PB5
+// PB4 -> PB6
+// PB5 -> PB7
+// PB6 -- ???
+// PB7 -- ??? 
+
 // determine data direction register for port p
 #define DDR( p ) ( *( &p - 1 ) )
 
