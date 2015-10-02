@@ -157,18 +157,20 @@ void getCenterElement( string centerElement_name )
 	}
 }
 
-string draw( string centerElement_name, real outlineRadius, int numOutlineVertices, int unitType )
+string draw( string centerElement_name, real outlineSideLength, real outlineRadius, int numOutlineVertices, int unitType )
 {
 	getCenterElement( centerElement_name );
 
 	real center_x = u2u( g_centerElement_x, unitType );
 	real center_y = u2u( g_centerElement_y, unitType );
-/*
-	// compute radius from polygon's side length
-	real d = 15;
-	real angle = 2*PI / numOutlineVertices;
-	outlineRadius = d / ( 2 * sin( angle / 2 ) );
-*/
+
+	if( outlineSideLength > 0 )
+	{
+		// compute radius from polygon's side length
+		real angle = 2*PI / numOutlineVertices;
+		outlineRadius = outlineSideLength / ( 2 * sin( angle / 2 ) );
+	}
+
 	return drawBoardOutline( center_x, center_y, outlineRadius, numOutlineVertices );
 }
 
@@ -200,6 +202,9 @@ if( board ) board( B )
 		// through all of the vertices (the circumcircle))
 		real outlineRadius = 20;
 
+		int useOutlineSideLength = 0;
+		real outlineSideLength = 15;
+
 		string prefix = "JP";
 		int startIndex = 1;
 		int stopIndex  = 5;
@@ -211,6 +216,7 @@ if( board ) board( B )
 				"Pick a part around which to draw the board outline.<br>"
 				"The outline will be a closed polygon with the specified number of vertices. "
 				"All vertices are evenly distributed on a circle of the specified size."
+				"<p>Alternatively, specify the polygon's side length instead of the radius."
 			);
 
 			dlgHBoxLayout
@@ -226,6 +232,9 @@ if( board ) board( B )
 
 				dlgLabel( "Radius:" );
 				dlgRealEdit( outlineRadius, 0, 99 );
+
+				dlgCheckBox( "Use side length:", useOutlineSideLength );
+				dlgRealEdit( outlineSideLength, 0, 99 );
 			}
 
 			dlgHBoxLayout
@@ -234,7 +243,13 @@ if( board ) board( B )
 
 				dlgPushButton( "Draw" )
 				{
-					cmd = draw( centerElement_name, outlineRadius, numOutlineVertices, unitType );
+					// if we do not use it, set outline side length to invalid value
+					if( ! useOutlineSideLength )
+					{
+						outlineSideLength = -1;
+					}
+
+					cmd = draw( centerElement_name, outlineSideLength, outlineRadius, numOutlineVertices, unitType );
 					dlgAccept();
 				}
 			}
