@@ -213,7 +213,7 @@ if( board ) board( B )
 		dlgGroup( "Board outline" )
 		{
 			dlgLabel(
-				"Pick a part around which to draw the board outline.<br>"
+				"Pick a part around which to draw the board outline. "
 				"The outline will be a closed polygon with the specified number of vertices. "
 				"All vertices are evenly distributed on a circle of the specified size."
 				"<p>Alternatively, specify the polygon's side length instead of the radius."
@@ -223,6 +223,8 @@ if( board ) board( B )
 			{
 				dlgLabel( "Center part name:" );
 				dlgStringEdit( centerElement_name );
+
+				dlgStretch( 1 );
 			}
 
 			dlgHBoxLayout
@@ -230,6 +232,11 @@ if( board ) board( B )
 				dlgLabel( "Vertices:" );
 				dlgSpinBox( numOutlineVertices, 3, 99 );
 
+				dlgStretch( 2 );
+			}
+
+			dlgHBoxLayout
+			{
 				dlgLabel( "Radius:" );
 				dlgRealEdit( outlineRadius, 0, 99 );
 
