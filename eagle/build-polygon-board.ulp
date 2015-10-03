@@ -192,6 +192,7 @@ if( board ) board( B )
 	int unitType = B.grid.unit;
 
 	string cmd = "";
+	int keepDialogOpen = 1;
 
 	int result = dlgDialog( "Pentagon stuff" )
 	{
@@ -306,7 +307,23 @@ if( board ) board( B )
 				}
 			}
 		}
+
+		dlgGroup( "Script behaviour" )
+		{
+			dlgCheckBox( "Keep dialog open", keepDialogOpen );
+		}
 	};
+
+	if( keepDialogOpen && ( strlen( cmd ) > 0 ) )
+	{
+		// Append a command for running this ULP. This achieves an update of
+		// the board (since the exit() call executes the actual payload) and
+		// then opens the ULP again. Useful for testing different values
+		// without having to manually open the ULP after each try.
+		string s;
+		sprintf( s, "RUN %s;", argv[ 0 ] );
+		cmd += s;
+	}
 
 	exit( cmd );
 }
