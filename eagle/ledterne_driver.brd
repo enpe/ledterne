@@ -1376,7 +1376,7 @@ Metric Code Size 1608</description>
 <packages>
 <package name="SOLPAD-SMD">
 <text x="-1.27" y="1.27" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<smd name="MP" x="0" y="0" dx="1.8796" dy="1.8796" layer="1" roundness="100"/>
+<smd name="MP" x="0" y="0" dx="1.58" dy="1.58" layer="1" roundness="100"/>
 </package>
 </packages>
 </library>

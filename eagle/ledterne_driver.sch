@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="mm" style="lines" multiple="1" display="no" altdistance="1.27" altunitdist="mm" altunit="mm"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -4077,7 +4077,7 @@ Source: AVX .. aphvc.pdf</description>
 <packages>
 <package name="SOLPAD-SMD">
 <text x="-1.27" y="1.27" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<smd name="MP" x="0" y="0" dx="1.8796" dy="1.8796" layer="1" roundness="100"/>
+<smd name="MP" x="0" y="0" dx="1.58" dy="1.58" layer="1" roundness="100"/>
 </package>
 </packages>
 <symbols>
