@@ -1575,8 +1575,8 @@ design rules under a new name.</description>
 <attribute name="OC_FARNELL" value="9171371" x="15.19" y="15.79" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="ATMEGA8-16AU" x="15.19" y="15.79" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="C1" library="rcl" package="C0603K" value="" x="9.07" y="15.53" rot="R90"/>
-<element name="C2" library="rcl" package="C0603K" value="" x="21.51" y="16.59" rot="R270"/>
+<element name="C1" library="rcl" package="C0603K" value="100n" x="9.07" y="15.53" rot="R90"/>
+<element name="C2" library="rcl" package="C0603K" value="100n" x="21.51" y="16.59" rot="R270"/>
 <element name="JP1" library="pinhead_round_pads" package="1X04/90" value="" x="16.51" y="29.01" rot="MR0"/>
 <element name="JP2" library="pinhead_round_pads" package="1X04/90" value="" x="28.39820625" y="20.3727125" rot="MR72"/>
 <element name="JP3" library="pinhead_round_pads" package="1X04/90" value="" x="23.857315625" y="6.3972875" rot="MR144"/>
