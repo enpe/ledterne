@@ -4121,13 +4121,13 @@ Source: AVX .. aphvc.pdf</description>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" deviceset="VCC" device=""/>
-<part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100n"/>
+<part name="C1" library="rcl" deviceset="C-EU" device="C0805K" value="100n"/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
-<part name="C2" library="rcl" deviceset="C-EU" device="C0603K" value="100n"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="C0805K" value="100n"/>
 <part name="JP1" library="pinhead_round_pads" deviceset="PINHD-1X4" device="/90"/>
 <part name="JP2" library="pinhead_round_pads" deviceset="PINHD-1X4" device="/90"/>
 <part name="JP3" library="pinhead_round_pads" deviceset="PINHD-1X4" device="/90"/>
