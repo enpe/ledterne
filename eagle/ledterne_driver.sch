@@ -4073,11 +4073,11 @@ Source: AVX .. aphvc.pdf</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="solpad-smd">
+<library name="solpad-ledterne">
 <packages>
-<package name="SOLPAD-SMD">
+<package name="LSP10">
+<pad name="MP" x="0" y="0" drill="1.016" diameter="1.8796"/>
 <text x="-1.27" y="1.27" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<smd name="MP" x="0" y="0" dx="1.58" dy="1.58" layer="1" roundness="100"/>
 </package>
 </packages>
 <symbols>
@@ -4090,12 +4090,12 @@ Source: AVX .. aphvc.pdf</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="SOLPAD-SMD-NORMAL" prefix="LSP">
+<deviceset name="LSP10" prefix="LSP">
 <gates>
 <gate name="1" symbol="LSP" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="SOLPAD-SMD">
+<device name="" package="LSP10">
 <connects>
 <connect gate="1" pin="MP" pad="MP"/>
 </connects>
@@ -4121,13 +4121,13 @@ Source: AVX .. aphvc.pdf</description>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" deviceset="VCC" device=""/>
-<part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100n"/>
+<part name="C1" library="rcl" deviceset="C-EU" device="C0805K" value="100n"/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
-<part name="C2" library="rcl" deviceset="C-EU" device="C0603K" value="100n"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="C0805K" value="100n"/>
 <part name="JP1" library="pinhead_round_pads" deviceset="PINHD-1X4" device="/90"/>
 <part name="JP2" library="pinhead_round_pads" deviceset="PINHD-1X4" device="/90"/>
 <part name="JP3" library="pinhead_round_pads" deviceset="PINHD-1X4" device="/90"/>
@@ -4136,12 +4136,12 @@ Source: AVX .. aphvc.pdf</description>
 <part name="SUPPLY" library="pinhead" deviceset="PINHD-1X2" device=""/>
 <part name="P+3" library="supply1" deviceset="VCC" device=""/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
-<part name="GND" library="solpad-smd" deviceset="SOLPAD-SMD-NORMAL" device=""/>
-<part name="SCK" library="solpad-smd" deviceset="SOLPAD-SMD-NORMAL" device=""/>
-<part name="MISO" library="solpad-smd" deviceset="SOLPAD-SMD-NORMAL" device=""/>
-<part name="MOSI" library="solpad-smd" deviceset="SOLPAD-SMD-NORMAL" device=""/>
-<part name="RESET" library="solpad-smd" deviceset="SOLPAD-SMD-NORMAL" device=""/>
-<part name="VCC" library="solpad-smd" deviceset="SOLPAD-SMD-NORMAL" device=""/>
+<part name="RESET" library="solpad-ledterne" deviceset="LSP10" device=""/>
+<part name="VCC" library="solpad-ledterne" deviceset="LSP10" device=""/>
+<part name="GND" library="solpad-ledterne" deviceset="LSP10" device=""/>
+<part name="MISO" library="solpad-ledterne" deviceset="LSP10" device=""/>
+<part name="SCK" library="solpad-ledterne" deviceset="LSP10" device=""/>
+<part name="MOSI" library="solpad-ledterne" deviceset="LSP10" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -4167,18 +4167,18 @@ Source: AVX .. aphvc.pdf</description>
 <instance part="SUPPLY" gate="G$1" x="48.26" y="53.34"/>
 <instance part="P+3" gate="VCC" x="38.1" y="63.5"/>
 <instance part="GND9" gate="1" x="38.1" y="45.72"/>
-<instance part="GND" gate="1" x="33.02" y="50.8" smashed="yes" rot="R90">
-<attribute name="NAME" x="29.21" y="51.689" size="1.778" layer="95" rot="R180"/>
-</instance>
-<instance part="SCK" gate="1" x="111.76" y="38.1" rot="R180"/>
-<instance part="MISO" gate="1" x="106.68" y="38.1" rot="R180"/>
-<instance part="MOSI" gate="1" x="109.22" y="53.34"/>
 <instance part="RESET" gate="1" x="43.18" y="116.84" smashed="yes" rot="R90">
-<attribute name="NAME" x="39.37" y="117.729" size="1.778" layer="95" rot="R180"/>
+<attribute name="NAME" x="39.37" y="117.475" size="1.778" layer="95" rot="R180"/>
 </instance>
 <instance part="VCC" gate="1" x="33.02" y="55.88" smashed="yes" rot="R90">
-<attribute name="NAME" x="29.21" y="56.769" size="1.778" layer="95" rot="R180"/>
+<attribute name="NAME" x="29.718" y="56.769" size="1.778" layer="95" rot="R180"/>
 </instance>
+<instance part="GND" gate="1" x="33.02" y="50.8" smashed="yes" rot="R90">
+<attribute name="NAME" x="29.718" y="51.689" size="1.778" layer="95" rot="R180"/>
+</instance>
+<instance part="MISO" gate="1" x="106.68" y="38.1" rot="R180"/>
+<instance part="SCK" gate="1" x="111.76" y="38.1" rot="R180"/>
+<instance part="MOSI" gate="1" x="109.22" y="53.34"/>
 </instances>
 <busses>
 </busses>
@@ -4244,10 +4244,10 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="45.72" y1="53.34" x2="38.1" y2="53.34" width="0.1524" layer="91"/>
 <pinref part="GND9" gate="1" pin="GND"/>
 <wire x1="38.1" y1="53.34" x2="38.1" y2="50.8" width="0.1524" layer="91"/>
-<wire x1="38.1" y1="50.8" x2="35.56" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="GND" gate="1" pin="MP"/>
 <wire x1="38.1" y1="50.8" x2="38.1" y2="48.26" width="0.1524" layer="91"/>
 <junction x="38.1" y="50.8"/>
+<pinref part="GND" gate="1" pin="MP"/>
+<wire x1="35.56" y1="50.8" x2="38.1" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VCC" class="0">
@@ -4275,9 +4275,9 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="38.1" y1="60.96" x2="38.1" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="SUPPLY" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="55.88" x2="45.72" y2="55.88" width="0.1524" layer="91"/>
+<junction x="38.1" y="55.88"/>
 <pinref part="VCC" gate="1" pin="MP"/>
 <wire x1="35.56" y1="55.88" x2="38.1" y2="55.88" width="0.1524" layer="91"/>
-<junction x="38.1" y="55.88"/>
 </segment>
 </net>
 <net name="RESET" class="0">
@@ -4293,11 +4293,11 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="101.6" y1="63.5" x2="106.68" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="63.5" x2="106.68" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="JP5" gate="A" pin="1"/>
-<pinref part="MOSI" gate="1" pin="MP"/>
 <wire x1="106.68" y1="48.26" x2="109.22" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="48.26" x2="127" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="109.22" y1="50.8" x2="109.22" y2="48.26" width="0.1524" layer="91"/>
 <junction x="109.22" y="48.26"/>
+<pinref part="MOSI" gate="1" pin="MP"/>
+<wire x1="109.22" y1="50.8" x2="109.22" y2="48.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MISO" class="0">
@@ -4306,11 +4306,11 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="101.6" y1="60.96" x2="105.41" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="105.41" y1="60.96" x2="105.41" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="105.41" y1="45.72" x2="106.68" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="106.68" y1="45.72" x2="106.68" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="JP5" gate="A" pin="2"/>
-<pinref part="MISO" gate="1" pin="MP"/>
 <wire x1="106.68" y1="45.72" x2="127" y2="45.72" width="0.1524" layer="91"/>
 <junction x="106.68" y="45.72"/>
+<pinref part="MISO" gate="1" pin="MP"/>
+<wire x1="106.68" y1="40.64" x2="106.68" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SCK" class="0">
@@ -4319,11 +4319,11 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="101.6" y1="58.42" x2="104.14" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="58.42" x2="104.14" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="JP5" gate="A" pin="3"/>
-<pinref part="SCK" gate="1" pin="MP"/>
 <wire x1="104.14" y1="43.18" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="43.18" x2="127" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="111.76" y1="40.64" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
 <junction x="111.76" y="43.18"/>
+<pinref part="SCK" gate="1" pin="MP"/>
+<wire x1="111.76" y1="40.64" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
