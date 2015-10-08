@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="mm"/>
+<grid distance="0.05" unitdist="inch" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -48,7 +48,7 @@
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
-<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
 <layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
@@ -57,9 +57,9 @@
 </layers>
 <library>
 <packages>
-<package name="SOLPAD-SMD">
+<package name="LSP10">
+<pad name="MP" x="0" y="0" drill="1.016" diameter="1.8796"/>
 <text x="-1.27" y="1.27" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<smd name="MP" x="0" y="0" dx="1.58" dy="1.58" layer="1" roundness="100"/>
 </package>
 </packages>
 <symbols>
@@ -72,12 +72,12 @@
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="SOLPAD-SMD-NORMAL" prefix="LSP">
+<deviceset name="LSP10" prefix="LSP">
 <gates>
 <gate name="1" symbol="LSP" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="SOLPAD-SMD">
+<device name="" package="LSP10">
 <connects>
 <connect gate="1" pin="MP" pad="MP"/>
 </connects>
