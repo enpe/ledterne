@@ -1,0 +1,337 @@
+#usage "<b>Build pentagon</b>\n"
+       "<p>"
+       "Does stuff."
+       "</p>"
+
+/*
+NOTES:
+	- There does not seem to be an easy way to move the endpoints of existing
+	  wires. We therefore always have to draw a new board outline instead of
+	  rearranging an existing one.
+*/
+
+// NOTE: These are global since we need a workaround for functions that cannot
+//       return more than one value (and no way to define custom types).
+int g_centerElement_x = 0;
+int g_centerElement_y = 0;
+
+
+/**
+ * Convert EAGLE's internal units
+ *
+ * @param value The value given in EAGLE's internal units
+ * @param unitType The desired output unit type
+ */
+real u2u( int value, int unitType )
+{
+	switch( unitType )
+	{
+		case GRID_UNIT_MIC:
+			return u2mic( value );
+
+		case GRID_UNIT_MM:
+			return u2mm( value );
+
+		case GRID_UNIT_MIL:
+			return u2mil( value );
+
+		case GRID_UNIT_INCH:
+			return u2inch( value );
+
+		default:
+			dlgMessageBox( "<b>ERROR:</b> Unknown output unit type");
+			return 0;
+	}
+}
+
+real rad2deg( real r )
+{
+	return r * 180 / PI;
+}
+
+string drawBoardOutline( real center_x, real center_y, real radius, int numOutlineVertices )
+{
+	real outlineVertices_x[];
+	real outlineVertices_y[];
+
+	real angle = 2*PI / numOutlineVertices;
+
+	int i;
+
+	// compute board outline's vertices
+	for( i = 0; i < numOutlineVertices; ++i )
+	{
+		outlineVertices_x[ i ] = center_x + radius * sin( i * angle );
+		outlineVertices_y[ i ] = center_y - radius * cos( i * angle );
+	}
+
+	// connect board outline's vertices with wires to form a closed polygon
+	string cmd = "";
+	cmd += "LAYER Dimension;";
+	cmd += "SET WIRE_BEND 2;";
+	for( i = 0; i < numOutlineVertices; ++i )
+	{
+		int n1 = i;
+		int n2 = ( n1 + 1 ) % numOutlineVertices;
+
+		string s;
+		sprintf( s, "WIRE 0 ( %f %f ) ( %f %f );",
+			outlineVertices_x[ n1 ], outlineVertices_y[ n1 ],
+			outlineVertices_x[ n2 ], outlineVertices_y[ n2 ] );
+
+		cmd += s;
+	}
+
+	return cmd;
+}
+
+string positionParts( string prefix, int startIndex, int stopIndex, real center_x, real center_y, real radius )
+{
+	string partNames[];
+	int numParts = 0;
+
+	int i;
+
+	board( B )
+	{
+		B.elements( E )
+		{
+			// TODO: This is super lazy. Clean it up by splitting E.name into
+			//       prefix and digit. Then compare these parts against the
+			//       given parameters.
+			for( i = startIndex; i <= stopIndex; ++i )
+			{
+				string name;
+				sprintf( name, "%s%d", prefix, i );
+
+				if( E.name == name )
+				{
+					partNames[ numParts ] = E.name;
+					++numParts;
+				}
+			}
+		}
+	}
+
+	real angle = 2*PI / numParts;
+	string cmd = "";
+
+	for( i = 0; i < numParts; ++i )
+	{
+		real x = center_x + radius * sin( i * angle );
+		real y = center_y + radius * cos( i * angle );
+
+		string s;
+		sprintf( s, "MOVE %s ( %f %f );", partNames[ i ], x, y );
+		cmd += s;
+
+		sprintf( s, "ROTATE =MR%f '%s';", rad2deg( i * angle ), partNames[ i ] );
+		cmd += s;
+	}
+
+	return cmd;
+}
+
+void getCenterElement( string centerElement_name )
+{
+	int centerElementFound = 0;
+
+	board( B )
+	{
+		B.elements( E )
+		{
+			if( E.name == centerElement_name )
+			{
+				centerElementFound = 1;
+				g_centerElement_x = E.x;
+				g_centerElement_y = E.y;
+				break;
+			}
+		}
+
+		if( ! centerElementFound )
+		{
+			dlgMessageBox( "<b>ERROR:</b> Center element not found" );
+			exit( 1 );
+		}
+	}
+}
+
+string draw( string centerElement_name, real outlineSideLength, real outlineRadius, int numOutlineVertices, int unitType )
+{
+	getCenterElement( centerElement_name );
+
+	real center_x = u2u( g_centerElement_x, unitType );
+	real center_y = u2u( g_centerElement_y, unitType );
+
+	if( outlineSideLength > 0 )
+	{
+		// compute radius from polygon's side length
+		real angle = 2*PI / numOutlineVertices;
+		outlineRadius = outlineSideLength / ( 2 * sin( angle / 2 ) );
+	}
+
+	return drawBoardOutline( center_x, center_y, outlineRadius, numOutlineVertices );
+}
+
+string place( string centerElement_name, string prefix, int startIndex, int stopIndex, real radius, int unitType )
+{
+	getCenterElement( centerElement_name );
+
+	real center_x = u2u( g_centerElement_x, unitType );
+	real center_y = u2u( g_centerElement_y, unitType );
+
+	// arrange parts in a circle (position parts in the middle of outline
+	// polygon's sides)
+	return positionParts( prefix, startIndex, stopIndex, center_x, center_y, radius );
+}
+
+
+if( board ) board( B )
+{
+	int unitType = B.grid.unit;
+
+	string cmd = "";
+	int keepDialogOpen = 1;
+
+	int result = dlgDialog( "Pentagon stuff" )
+	{
+		string centerElement_name = "IC1";
+		int numOutlineVertices = 5;
+
+		// polygon's circumradius (i.e. the radius of the circle which passes
+		// through all of the vertices (the circumcircle))
+		real outlineRadius = 20;
+
+		int useOutlineSideLength = 0;
+		real outlineSideLength = 15;
+
+		string prefix = "JP";
+		int startIndex = 1;
+		int stopIndex  = 5;
+		real radius = 15;
+
+		dlgGroup( "Board outline" )
+		{
+			dlgLabel(
+				"Pick a part around which to draw the board outline. "
+				"The outline will be a closed polygon with the specified number of vertices. "
+				"All vertices are evenly distributed on a circle of the specified size."
+				"<p>Alternatively, specify the polygon's side length instead of the radius."
+			);
+
+			dlgHBoxLayout
+			{
+				dlgLabel( "Center part name:" );
+				dlgStringEdit( centerElement_name );
+
+				dlgStretch( 1 );
+			}
+
+			dlgHBoxLayout
+			{
+				dlgLabel( "Vertices:" );
+				dlgSpinBox( numOutlineVertices, 3, 99 );
+
+				dlgStretch( 2 );
+			}
+
+			dlgHBoxLayout
+			{
+				dlgLabel( "Radius:" );
+				dlgRealEdit( outlineRadius, 0, 99 );
+
+				dlgCheckBox( "Use side length:", useOutlineSideLength );
+				dlgRealEdit( outlineSideLength, 0, 99 );
+			}
+
+			dlgHBoxLayout
+			{
+				dlgStretch( 1 );
+
+				dlgPushButton( "Draw" )
+				{
+					// if we do not use it, set outline side length to invalid value
+					if( ! useOutlineSideLength )
+					{
+						outlineSideLength = -1;
+					}
+
+					cmd = draw( centerElement_name, outlineSideLength, outlineRadius, numOutlineVertices, unitType );
+					dlgAccept();
+				}
+			}
+		}
+
+		dlgGroup( "Part placement" )
+		{
+			string s;
+			sprintf( s, "%s%d to %s%d", prefix, startIndex, prefix, stopIndex );
+
+			dlgLabel(
+				"<p>Enter the common prefix of the parts you want to place in a circle around the above center part. "
+				"Then select the index range to specify the actual parts. "
+				"This will process all parts whose names match the given scheme "
+				"(e.g. parts " + s + " with the default settings)."
+				"<p>Decrease the radius to move the parts closer to the board's center or increase it to push them further outwards."
+			);
+
+			dlgHBoxLayout
+			{
+				dlgLabel( "Prefix:" );
+				dlgStringEdit( prefix );
+
+				dlgLabel( "Index:" );
+				dlgSpinBox( startIndex, 1, 99 );
+
+				dlgLabel( "to" );
+				dlgSpinBox( stopIndex, 1, 99 );
+			}
+
+			dlgHBoxLayout
+			{
+				dlgLabel( "Radius:" );
+				dlgRealEdit( radius, 0, 99 );
+
+				dlgStretch( 1 );
+			}
+
+			dlgHBoxLayout
+			{
+				dlgStretch( 1 );
+
+				dlgPushButton( "Place" )
+				{
+					cmd = place( centerElement_name, prefix, startIndex, stopIndex, radius, unitType );
+					dlgAccept();
+				}
+			}
+		}
+
+		dlgGroup( "Script behaviour" )
+		{
+			dlgCheckBox( "Keep dialog open", keepDialogOpen );
+		}
+	};
+
+	if( keepDialogOpen && ( strlen( cmd ) > 0 ) )
+	{
+		// Append a command for running this ULP. This achieves an update of
+		// the board (since the exit() call executes the actual payload) and
+		// then opens the ULP again. Useful for testing different values
+		// without having to manually open the ULP after each try.
+		string s;
+		sprintf( s, "RUN %s;", argv[ 0 ] );
+		cmd += s;
+	}
+
+	exit( cmd );
+}
+else
+{
+	dlgMessageBox( "Start this ULP in a Board!" );
+}
+
+exit( 0 );
+
+
