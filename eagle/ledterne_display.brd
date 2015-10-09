@@ -55,6 +55,7 @@
 <layer number="97" name="Info" color="7" fill="1" visible="no" active="no"/>
 <layer number="98" name="Guide" color="6" fill="1" visible="no" active="no"/>
 <layer number="99" name="SpiceOrder" color="5" fill="1" visible="no" active="no"/>
+<layer number="116" name="centerDrill" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
 <board>
 <plain>
@@ -62,6 +63,10 @@
 <wire x1="15" y1="0" x2="15" y2="15" width="0.1" layer="20"/>
 <wire x1="15" y1="15" x2="0" y2="15" width="0.1" layer="20"/>
 <wire x1="0" y1="15" x2="0" y2="0" width="0.1" layer="20"/>
+<circle x="3.69" y="2" radius="0.354" width="0.408" layer="116"/>
+<circle x="6.23" y="2" radius="0.354" width="0.408" layer="116"/>
+<circle x="8.77" y="2" radius="0.354" width="0.408" layer="116"/>
+<circle x="11.31" y="2" radius="0.354" width="0.408" layer="116"/>
 </plain>
 <libraries>
 <library name="led-rgb">
