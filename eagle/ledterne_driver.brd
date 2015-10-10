@@ -152,6 +152,9 @@
 <hole x="23.3283" y="25.8946" drill="2"/>
 <hole x="16.51" y="4.91" drill="2"/>
 <hole x="9.6917" y="25.8946" drill="2"/>
+<text x="22.2" y="19.7" size="1.1" layer="16" font="vector" ratio="15" rot="MR0">LEDterne</text>
+<text x="22.2" y="18" size="1.1" layer="16" font="vector" ratio="15" rot="MR0">2015-10-10</text>
+<text x="22.2" y="16.3" size="1.1" layer="16" font="vector" ratio="15" rot="MR0">v1.0</text>
 </plain>
 <libraries>
 <library name="atmel">
