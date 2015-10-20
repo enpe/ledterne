@@ -39,52 +39,26 @@
 
 
 // LED outputs (connected to the anodes)
-#define PORT_0 PORTC
-#define PIN_G0 PC5
-#define PIN_R0 PC4
-#define PIN_B0 PC3
-#define PORT_1 PORTC
-#define PIN_G1 PC2
-#define PIN_R1 PC1
-#define PIN_B1 PC0
-#define PORT_2 PORTB
-#define PIN_G2 PB5
-#define PIN_R2 PB4
-#define PIN_B2 PB3
-#define PORT_3 PORTB
-#define PIN_G3 PB2
-#define PIN_R3 PB1
-#define PIN_B3 PB0
-#define PORT_4 PORTD
-#define PIN_G4 PD2
-#define PIN_R4 PD1
-#define PIN_B4 PD0
-
-// PC0 -> PA0
-// PC1 -> PA1
-// PC2 -> PA2
-// PC3 -> PA3
-// PC4 -> PA4
-// PC5 -> PA5
-// PC6 -- reset
-
-// PD0 -> PD0
-// PD1 -> PD1
-// PD2 -> PD2
-// PD3 -> PD3
-// PD4 -> PD4
-// PD5 -> PD5
-// PD6 -> PD6
-// PD7 -> PD7
-
-// PB0 -> PB2
-// PB1 -> PB3
-// PB2 -> PB4
-// PB3 -> PB5
-// PB4 -> PB6
-// PB5 -> PB7
-// PB6 -- ???
-// PB7 -- ??? 
+#define PORT_0 PORTB
+#define PIN_R0 PB2
+#define PIN_G0 PB1
+#define PIN_B0 PB0
+#define PORT_1 PORTD
+#define PIN_R1 PD7
+#define PIN_G1 PD6
+#define PIN_B1 PD5
+#define PORT_2 PORTD
+#define PIN_R2 PD2
+#define PIN_G2 PD1
+#define PIN_B2 PD0
+#define PORT_3 PORTC
+#define PIN_R3 PC2
+#define PIN_G3 PC1
+#define PIN_B3 PC0
+#define PORT_4 PORTB
+#define PIN_R4 PB5
+#define PIN_G4 PB4
+#define PIN_B4 PB3
 
 // determine data direction register for port p
 #define DDR( p ) ( *( &p - 1 ) )
