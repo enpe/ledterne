@@ -18,7 +18,6 @@
 
 ## TODO
 
-- Add EAGLE schematic and board of the prototype lantern
 - Experiment with LEDs
 	- Adjust series resistors for balanced LED brightness of the different colors
 	- Try diffusing light from the LEDs
