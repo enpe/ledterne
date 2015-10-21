@@ -255,6 +255,10 @@ int main( void )
 			.programType = KnightRider,
 			.repetitions = 2,
 		},
+		{
+			.programType = TestDisplays,
+			.repetitions = 1,
+		},
 	};
 
 	// compute number of modules in the animation
@@ -313,6 +317,13 @@ int main( void )
 						programDestroyFunc = &ColoredConveyor_destroy;
 						programExecuteFunc = &ColoredConveyor_execute;
 						break;
+
+					case TestDisplays:
+						currentProgram = TestDisplaysProgram_create();
+						programDestroyFunc = &TestDisplaysProgram_destroy;
+						programExecuteFunc = &TestDisplaysProgram_execute;
+						break;
+
 				}
 			}
 

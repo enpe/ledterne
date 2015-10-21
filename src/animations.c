@@ -346,5 +346,80 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 	return rampUp( &prog->frame, programLen - 1, 1 );
 }
 
+struct _TestDisplaysProgram
+{
+	uint8_t frame;
+	uint8_t color;       // 0 - red, 1 - green, 2 - blue
+	uint8_t centerIndex; // Currently lit LED.
+	uint8_t updateAnimation;
+	uint8_t updateCount;
+};
+
+TestDisplaysProgram* TestDisplaysProgram_create()
+{
+	TestDisplaysProgram* prog = (TestDisplaysProgram*) malloc( sizeof(TestDisplaysProgram) );
+
+	prog->frame       = 0;
+	prog->color       = 0;
+	prog->centerIndex = 0;
+	prog->updateAnimation = 15;
+	prog->updateCount = 1;
+
+	return prog;
+}
+
+void TestDisplaysProgram_destroy( TestDisplaysProgram* prog )
+{
+	free( prog );
+}
+
+uint8_t TestDisplaysProgram_execute( TestDisplaysProgram* prog )
+{
+	const uint8_t PROGRAM_LEN = 15;
+
+	// update the animation on ever second call only (this effectively halves the frame rate)
+	if( prog->updateCount < prog->updateAnimation )
+	{
+		prog->updateCount += 1;
+		return 0;
+	}
+	prog->updateCount = 0;
+
+	uint8_t i;
+
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		uint8_t red = 0, green = 0, blue = 0;
+		if ( i == prog->centerIndex )
+		{
+			switch( prog->color )
+			{
+				case 0:
+					red = MAX_INTENSITY;
+					break;
+				case 1:
+					green = MAX_INTENSITY;
+					break;
+				case 2:
+					blue = MAX_INTENSITY;
+					break;
+			}
+		}
+
+		setIntensity( i, red, green, blue );		
+	}
 
 
+	prog->centerIndex += 1; // Avoid modulo!?!
+	if ( prog->centerIndex >= NUM_PIXELS )
+	{
+		prog->centerIndex = 0;
+		prog->color += 1;
+		
+		if ( prog->color >= 3 ) 
+			prog->color = 0;
+	}
+
+	prog->frame += 1;
+	return prog->frame >= PROGRAM_LEN; // 1 - if program length has been reached, otherwise 0
+}
