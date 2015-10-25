@@ -433,4 +433,76 @@ uint8_t TestDisplays_execute( TestDisplaysProgram* prog )
 }
 
 
+struct _FlickeringCandleProgram
+{
+	uint8_t updateAnimation;
+};
+
+FlickeringCandleProgram* FlickeringCandle_create()
+{
+	FlickeringCandleProgram* prog
+		= (FlickeringCandleProgram*) malloc( sizeof( FlickeringCandleProgram ) );
+
+	if( prog )
+	{
+		prog->updateAnimation = 1;
+	}
+
+	return prog;
+}
+
+void FlickeringCandle_destroy( FlickeringCandleProgram* prog )
+{
+	free( prog );
+}
+
+uint8_t FlickeringCandle_execute( FlickeringCandleProgram* prog )
+{
+	uint8_t i;
+
+	if( prog->updateAnimation > 0 )
+	{
+		prog->updateAnimation -= 1;
+	}
+	else
+	{
+		// update LEDs
+#if 0
+		#define BASE  MAX_INTENSITY - 5
+		#define RANGE ( MAX_INTENSITY - (BASE) )
+
+		for( i = 0; i < NUM_PIXELS; i++ )
+		{
+			uint8_t red    = BASE + (uint8_t) ( RANGE * ( (float) rand() / RAND_MAX ) );
+			uint8_t yellow = BASE + (uint8_t) ( RANGE * ( (float) rand() / RAND_MAX ) );
+			// NOTE: set red to zero above to determine a good mixture between red and green for yellow
+			uint8_t r = 0.1 * red + 0.9 * yellow;
+			uint8_t g =             0.6 * yellow;
+
+			setIntensity( i, r, g, 0 );
+		}
+#else
+		#define BASE  160
+		#define RANGE ( 255 - BASE )
+
+		for( i = 0; i < NUM_PIXELS; i++ )
+		{
+			uint8_t red    = BASE + (uint8_t) ( RANGE * ( (float) rand() / RAND_MAX ) );
+			uint8_t yellow = BASE + (uint8_t) ( RANGE * ( (float) rand() / RAND_MAX ) );
+			// NOTE: set red to zero above to determine a good mixture between red and green for yellow
+			uint8_t r = 0.4 * red + 0.6  * yellow;
+			uint8_t g =             0.25 * yellow;
+
+			setIntensityRaw( i, r, g, 0 );
+		}
+#endif
+
+		// get new random update delay
+		prog->updateAnimation = (uint8_t) ( 128 * ( (float) rand() / RAND_MAX ) );
+	}
+
+	return 0;
+}
+
+
 
