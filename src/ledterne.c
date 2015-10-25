@@ -115,6 +115,18 @@ void setIntensity( uint8_t pixelIndex, uint8_t r, uint8_t g, uint8_t b )
 	}
 }
 
+void setIntensityRaw( uint8_t pixelIndex, uint8_t r, uint8_t g, uint8_t b )
+{
+	if( pixelIndex >= NUM_PIXELS )
+	{
+		return;
+	}
+
+	g_intensity[ pixelIndex ].r = r;
+	g_intensity[ pixelIndex ].g = g;
+	g_intensity[ pixelIndex ].b = b;
+}
+
 
 /**
  * @brief Interrupt handler for a single PWM step
@@ -201,11 +213,11 @@ void animationTimerInit()
 	// reset counter TCNT1 when it reaches the value in OCRA1
 	TCCR1B |= (1<<WGM12);
 
-	// frequency of timer interrupts: ca. 15 Hz
+	// frequency of timer interrupts: ca. 977 Hz
 	//
 	//     f = F_CPU / (PRESCALER * (1 + OCR1A))
 	// OCRA1 = F_CPU / (f * PRESCALER) - 1
-	OCR1A = 520;
+	OCR1A = 7;
 
 	// enable interrupt on reaching the reference value in OCR1A
 	TIMSK |= (1<<OCIE1A);
@@ -234,6 +246,7 @@ int main( void )
 
 	pwmTimerInit();
 	animationTimerInit();
+	srand( 0 );
 
 	uint8_t i;
 
@@ -249,6 +262,10 @@ int main( void )
 
 	AnimationModule const animation[] =
 	{
+		{
+			.programType = FlickeringCandle,
+			.repetitions = 1,
+		},
 		{
 			.programType = ColoredConveyor,
 			.repetitions = 12,
@@ -336,6 +353,11 @@ int main( void )
 						programExecuteFunc = &TestDisplays_execute;
 						break;
 
+					case FlickeringCandle:
+						currentProgram = FlickeringCandle_create();
+						programDestroyFunc = &FlickeringCandle_destroy;
+						programExecuteFunc = &FlickeringCandle_execute;
+						break;
 				}
 
 				setAnimationTimer( currentModule->timerPeriod );

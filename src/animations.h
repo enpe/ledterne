@@ -9,7 +9,8 @@ enum AnimationProgram
 	MixedColorBlending,
 	KnightRider,
 	ColoredConveyor,
-	TestDisplays
+	TestDisplays,
+	FlickeringCandle,
 };
 
 typedef struct
@@ -62,6 +63,14 @@ typedef struct _TestDisplaysProgram TestDisplaysProgram;
 TestDisplaysProgram* TestDisplays_create();
 void TestDisplays_destroy( TestDisplaysProgram* prog );
 uint8_t TestDisplays_execute( TestDisplaysProgram* prog );
+
+
+struct _FlickeringCandleProgram;
+typedef struct _FlickeringCandleProgram FlickeringCandleProgram;
+
+FlickeringCandleProgram* FlickeringCandle_create();
+void FlickeringCandle_destroy( FlickeringCandleProgram* prog );
+uint8_t FlickeringCandle_execute( FlickeringCandleProgram* prog );
 
 
 #endif // ANIMATIONS_H_
