@@ -346,6 +346,7 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 	return rampUp( &prog->frame, programLen - 1, 1 );
 }
 
+
 struct _TestDisplaysProgram
 {
 	uint8_t frame;
@@ -355,7 +356,7 @@ struct _TestDisplaysProgram
 	uint8_t updateCount;
 };
 
-TestDisplaysProgram* TestDisplaysProgram_create()
+TestDisplaysProgram* TestDisplays_create()
 {
 	TestDisplaysProgram* prog = (TestDisplaysProgram*) malloc( sizeof(TestDisplaysProgram) );
 
@@ -368,12 +369,12 @@ TestDisplaysProgram* TestDisplaysProgram_create()
 	return prog;
 }
 
-void TestDisplaysProgram_destroy( TestDisplaysProgram* prog )
+void TestDisplays_destroy( TestDisplaysProgram* prog )
 {
 	free( prog );
 }
 
-uint8_t TestDisplaysProgram_execute( TestDisplaysProgram* prog )
+uint8_t TestDisplays_execute( TestDisplaysProgram* prog )
 {
 	const uint8_t PROGRAM_LEN = 15;
 

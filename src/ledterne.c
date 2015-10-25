@@ -319,9 +319,9 @@ int main( void )
 						break;
 
 					case TestDisplays:
-						currentProgram = TestDisplaysProgram_create();
-						programDestroyFunc = &TestDisplaysProgram_destroy;
-						programExecuteFunc = &TestDisplaysProgram_execute;
+						currentProgram = TestDisplays_create();
+						programDestroyFunc = &TestDisplays_destroy;
+						programExecuteFunc = &TestDisplays_execute;
 						break;
 
 				}
