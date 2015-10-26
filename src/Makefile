@@ -220,7 +220,7 @@ disasm: $(DUMPTRG) stats
 
 stats: $(TRG)
 	$(OBJDUMP) -h $(TRG)
-	$(SIZE) $(TRG) 
+	$(SIZE) -C --mcu=$(MCU) $(TRG)
 
 hex: $(HEXTRG)
 
