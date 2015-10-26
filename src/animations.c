@@ -27,14 +27,14 @@ struct _RampUpDownAnimation
 	uint8_t up;
 };
 
-RampUpDownAnimation* RampUpDown_create( uint8_t maxValue )
+RampUpDownAnimation* RampUpDown_create( uint8_t maxValue, uint8_t up )
 {
 	RampUpDownAnimation* ani = (RampUpDownAnimation*) malloc( sizeof( RampUpDownAnimation ) );
 
 	if( ani )
 	{
 		ani->maxValue = maxValue;
-		ani->up       = 1;
+		ani->up       = up;
 	}
 
 	return ani;
@@ -105,9 +105,9 @@ MixedColorBlendingProgram* MixedColorBlending_create()
 
 	if( prog )
 	{
-		prog->aniR = RampUpDown_create( MAX_INTENSITY );
-		prog->aniG = RampUpDown_create( MAX_INTENSITY );
-		prog->aniB = RampUpDown_create( MAX_INTENSITY );
+		prog->aniR = RampUpDown_create( MAX_INTENSITY, 1 );
+		prog->aniG = RampUpDown_create( MAX_INTENSITY, 1 );
+		prog->aniB = RampUpDown_create( MAX_INTENSITY, 1 );
 
 		// intial LED intensities
 		prog->r =  0;
@@ -167,7 +167,7 @@ KnightRiderProgram* KnightRider_create()
 
 	if( prog )
 	{
-		prog->ramp = RampUpDown_create( NUM_PIXELS - 1 );
+		prog->ramp = RampUpDown_create( NUM_PIXELS - 1, 1 );
 		prog->centerIndex = 0;
 		prog->frame = 0;
 		memset( prog->fadeState, 0, sizeof( prog->fadeState ) );
@@ -269,6 +269,7 @@ struct _ColoredConveyorProgram
 	uint8_t* colorList[ 3 ];
 	uint8_t colorIndex[ NUM_PIXELS ];
 	uint8_t frame;
+	uint8_t rampCompleted[ NUM_PIXELS ];
 };
 
 ColoredConveyorProgram* ColoredConveyor_create()
@@ -282,17 +283,25 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 		for( i = 0; i < NUM_PIXELS; i++ )
 		{
-			prog->ramps[ i ] = RampUpDown_create( MAX_INTENSITY );
+			prog->ramps[ i ] = RampUpDown_create( MAX_INTENSITY, i < 3 );
 
 			// initial LED intensities
-			prog->r[ i ] = i * ( MAX_INTENSITY / ( NUM_PIXELS - 1 ) );
+			//prog->r[ i ] = i * ( MAX_INTENSITY / ( NUM_PIXELS - 1 ) );
 			prog->g[ i ] = 0;
 			prog->b[ i ] = 0;
 
 			prog->colorIndex[ i ] = 0;
 
 			prog->p[ i ] = &prog->r[ i ];
+
+			prog->rampCompleted[ i ] = 4;
 		}
+
+		prog->r[ 0 ] =  0;
+		prog->r[ 1 ] = 13;
+		prog->r[ 2 ] = 26;
+		prog->r[ 3 ] = 23;
+		prog->r[ 4 ] = 10;
 
 		prog->colorList[ 0 ] = prog->r;
 		prog->colorList[ 1 ] = prog->g;
@@ -318,8 +327,6 @@ void ColoredConveyor_destroy( ColoredConveyorProgram* prog )
 
 uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 {
-	static uint8_t const programLen = 56;  // total number of frames in this program
-
 	uint8_t i;
 
 	// update LED colors for display
@@ -333,17 +340,22 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		// ramp up/down the colors pointed to by p
 		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 3 ) )
 		{
-			// if one complete up/down cycle has been completed, select the next color (start at
-			// beginning if we reached the color list's end)
-			rampUp( &prog->colorIndex[ i ], 2, 1 );
+			prog->rampCompleted[ i ] -= 1;
+			if( prog->rampCompleted[ i ] == 0 )
+			{
+				// if one complete up/down cycle has been completed, select the next color (start at
+				// beginning if we reached the color list's end)
+				rampUp( &prog->colorIndex[ i ], 2, 1 );
 
-			uint8_t currentColorIndex = prog->colorIndex[ i ];
-			prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
+				uint8_t currentColorIndex = prog->colorIndex[ i ];
+				prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
+
+				prog->rampCompleted[ i ] = 4;
+			}
 		}
 	}
 
-	// advance frame counter (automatically wraps around)
-	return rampUp( &prog->frame, programLen - 1, 1 );
+	return 0;
 }
 
 
@@ -424,3 +436,6 @@ uint8_t TestDisplays_execute( TestDisplaysProgram* prog )
 	prog->frame += 1;
 	return prog->frame >= PROGRAM_LEN; // 1 - if program length has been reached, otherwise 0
 }
+
+
+

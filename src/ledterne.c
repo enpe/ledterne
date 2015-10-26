@@ -247,18 +247,6 @@ int main( void )
 			.programType = ColoredConveyor,
 			.repetitions = 5,
 		},
-		{
-			.programType = MixedColorBlending,
-			.repetitions = 1,
-		},
-		{
-			.programType = KnightRider,
-			.repetitions = 2,
-		},
-		{
-			.programType = TestDisplays,
-			.repetitions = 1,
-		},
 	};
 
 	// compute number of modules in the animation
