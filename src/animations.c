@@ -270,7 +270,31 @@ struct _ColoredConveyorProgram
 	uint8_t colorIndex[ NUM_PIXELS ];
 	uint8_t frame;
 	uint8_t rampCompleted[ NUM_PIXELS ];
+	uint8_t init[ NUM_PIXELS ];
 };
+
+uint8_t triangle( uint8_t x )
+{
+	uint8_t p = MAX_INTENSITY;
+
+#if 0
+	return p - abs( ( x % ( 2*p ) ) - p );
+#else
+	uint8_t T = 2*p;
+
+	// This is x % T but makes GCC use a faster intrinsic for the division.
+	uint8_t x_ = x - T * ( x / T );
+
+	if( x_ < p )
+	{
+		return x_;
+	}
+	else
+	{
+		return T - x_;
+	}
+#endif
+}
 
 ColoredConveyorProgram* ColoredConveyor_create()
 {
@@ -286,7 +310,12 @@ ColoredConveyorProgram* ColoredConveyor_create()
 			prog->ramps[ i ] = RampUpDown_create( MAX_INTENSITY, i < 3 );
 
 			// initial LED intensities
-			//prog->r[ i ] = i * ( MAX_INTENSITY / ( NUM_PIXELS - 1 ) );
+			// TODO: GCC does not compute these constants at compile-time and thus avoid
+			//       floating-point math. How can we force it to do so? So far, only compiling with
+			//       -03 seems to do the job.
+			uint8_t d = 0.5f + i * ( 2.f * MAX_INTENSITY + 1 ) / NUM_PIXELS;
+			prog->init[ i ] = d;
+			prog->r[ i ] = triangle( d );
 			prog->g[ i ] = 0;
 			prog->b[ i ] = 0;
 
@@ -296,12 +325,6 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 			prog->rampCompleted[ i ] = 4;
 		}
-
-		prog->r[ 0 ] =  0;
-		prog->r[ 1 ] = 13;
-		prog->r[ 2 ] = 26;
-		prog->r[ 3 ] = 23;
-		prog->r[ 4 ] = 10;
 
 		prog->colorList[ 0 ] = prog->r;
 		prog->colorList[ 1 ] = prog->g;
@@ -338,7 +361,14 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 	for( i = 0; i < NUM_PIXELS; i++ )
 	{
 		// ramp up/down the colors pointed to by p
-		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 3 ) )
+#if 1
+#	if 1
+		*( prog->p[ i ] ) = triangle( prog->init[ i ] + prog->frame );
+#	else
+		RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 1 );
+#	endif
+#else
+		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 1 ) )
 		{
 			prog->rampCompleted[ i ] -= 1;
 			if( prog->rampCompleted[ i ] == 0 )
@@ -353,7 +383,11 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 				prog->rampCompleted[ i ] = 4;
 			}
 		}
+#endif
 	}
+
+	// TODO: Properly handle periodicy.
+	prog->frame += 1;
 
 	return 0;
 }
