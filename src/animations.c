@@ -352,12 +352,6 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 {
 	uint8_t i;
 
-	// update LED colors for display
-	for( i = 0; i < NUM_PIXELS; i++ )
-	{
-		setIntensity( i, prog->r[ i ], prog->g[ i ], prog->b[ i ] );
-	}
-
 	for( i = 0; i < NUM_PIXELS; i++ )
 	{
 		// ramp up/down the colors pointed to by p
@@ -386,8 +380,20 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 #endif
 	}
 
-	// TODO: Properly handle periodicy.
-	prog->frame += 1;
+	// update LED colors for display
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		setIntensity( i, prog->r[ i ], prog->g[ i ], prog->b[ i ] );
+	}
+
+	if( prog->frame < 2 * MAX_INTENSITY - 1 )
+	{
+		prog->frame += 1;
+	}
+	else
+	{
+		prog->frame = 0;
+	}
 
 	return 0;
 }
