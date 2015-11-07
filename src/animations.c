@@ -356,11 +356,22 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 	{
 		// ramp up/down the colors pointed to by p
 #if 1
-#	if 1
 		*( prog->p[ i ] ) = triangle( prog->init[ i ] + prog->frame );
-#	else
-		RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 1 );
-#	endif
+		if( *( prog->p[ i ] ) == 0 )
+		{
+			prog->rampCompleted[ i ] -= 1;
+			if( prog->rampCompleted[ i ] == 0 )
+			{
+				// if one complete up/down cycle has been completed, select the next color (start at
+				// beginning if we reached the color list's end)
+				rampUp( &prog->colorIndex[ i ], 2, 1 );
+
+				uint8_t currentColorIndex = prog->colorIndex[ i ];
+				prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
+
+				prog->rampCompleted[ i ] = 4;
+			}
+		}
 #else
 		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 1 ) )
 		{
@@ -389,13 +400,13 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 	if( prog->frame < 2 * MAX_INTENSITY - 1 )
 	{
 		prog->frame += 1;
+		return 0;
 	}
 	else
 	{
 		prog->frame = 0;
+		return 1;
 	}
-
-	return 0;
 }
 
 

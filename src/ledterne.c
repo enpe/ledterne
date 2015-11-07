@@ -245,7 +245,7 @@ int main( void )
 	{
 		{
 			.programType = ColoredConveyor,
-			.repetitions = 5,
+			.repetitions = 12,
 		},
 	};
 
