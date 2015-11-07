@@ -307,8 +307,6 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 		for( i = 0; i < NUM_PIXELS; i++ )
 		{
-			prog->ramps[ i ] = RampUpDown_create( MAX_INTENSITY, i < 3 );
-
 			// initial LED intensities
 			// TODO: GCC does not compute these constants at compile-time and thus avoid
 			//       floating-point math. How can we force it to do so? So far, only compiling with
@@ -338,13 +336,6 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 void ColoredConveyor_destroy( ColoredConveyorProgram* prog )
 {
-	uint8_t i;
-
-	for( i = 0; i < NUM_PIXELS; i++ )
-	{
-		 RampUpDown_destroy( prog->ramps[ i ] );
-	}
-
 	free( prog );
 }
 
@@ -355,7 +346,6 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 	for( i = 0; i < NUM_PIXELS; i++ )
 	{
 		// ramp up/down the colors pointed to by p
-#if 1
 		*( prog->p[ i ] ) = triangle( prog->init[ i ] + prog->frame );
 		if( *( prog->p[ i ] ) == 0 )
 		{
@@ -372,23 +362,6 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 				prog->rampCompleted[ i ] = 4;
 			}
 		}
-#else
-		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 1 ) )
-		{
-			prog->rampCompleted[ i ] -= 1;
-			if( prog->rampCompleted[ i ] == 0 )
-			{
-				// if one complete up/down cycle has been completed, select the next color (start at
-				// beginning if we reached the color list's end)
-				rampUp( &prog->colorIndex[ i ], 2, 1 );
-
-				uint8_t currentColorIndex = prog->colorIndex[ i ];
-				prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
-
-				prog->rampCompleted[ i ] = 4;
-			}
-		}
-#endif
 	}
 
 	// update LED colors for display
