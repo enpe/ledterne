@@ -269,7 +269,7 @@ struct _ColoredConveyorProgram
 	uint8_t* colorList[ 3 ];
 	uint8_t colorIndex[ NUM_PIXELS ];
 	uint8_t frame;
-	uint8_t rampCompleted[ NUM_PIXELS ];
+	uint8_t cyclesToGo[ NUM_PIXELS ];
 	uint8_t init[ NUM_PIXELS ];
 };
 
@@ -321,7 +321,7 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 			prog->p[ i ] = &prog->r[ i ];
 
-			prog->rampCompleted[ i ] = 4;
+			prog->cyclesToGo[ i ] = 4;
 		}
 
 		prog->colorList[ 0 ] = prog->r;
@@ -349,17 +349,17 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		*( prog->p[ i ] ) = triangle( prog->init[ i ] + prog->frame );
 		if( *( prog->p[ i ] ) == 0 )
 		{
-			prog->rampCompleted[ i ] -= 1;
-			if( prog->rampCompleted[ i ] == 0 )
+			prog->cyclesToGo[ i ] -= 1;
+			if( prog->cyclesToGo[ i ] == 0 )
 			{
-				// if one complete up/down cycle has been completed, select the next color (start at
-				// beginning if we reached the color list's end)
+				// if the configured number of triangle cycles has been completed, select the next
+				// color (start at beginning if we reached the color list's end)
 				rampUp( &prog->colorIndex[ i ], 2, 1 );
 
 				uint8_t currentColorIndex = prog->colorIndex[ i ];
 				prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
 
-				prog->rampCompleted[ i ] = 4;
+				prog->cyclesToGo[ i ] = 4;
 			}
 		}
 	}
@@ -370,16 +370,8 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		setIntensity( i, prog->r[ i ], prog->g[ i ], prog->b[ i ] );
 	}
 
-	if( prog->frame < 2 * MAX_INTENSITY - 1 )
-	{
-		prog->frame += 1;
-		return 0;
-	}
-	else
-	{
-		prog->frame = 0;
-		return 1;
-	}
+	// advance frame counter (automatically wraps around)
+	return rampUp( &prog->frame, 2 * MAX_INTENSITY - 1, 1 );
 }
 
 
