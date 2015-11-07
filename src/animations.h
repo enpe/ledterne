@@ -26,7 +26,7 @@ uint8_t rampUp( uint8_t* value, uint8_t maxValue, uint8_t stepSize );
 struct _RampUpDownAnimation;
 typedef struct _RampUpDownAnimation RampUpDownAnimation;
 
-RampUpDownAnimation* RampUpDown_create( uint8_t maxValue );
+RampUpDownAnimation* RampUpDown_create( uint8_t maxValue, uint8_t up );
 void RampUpDown_destroy( RampUpDownAnimation* ani );
 uint8_t RampUpDown_step( RampUpDownAnimation* ani, uint8_t* value, uint8_t stepSize );
 

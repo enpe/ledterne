@@ -245,19 +245,7 @@ int main( void )
 	{
 		{
 			.programType = ColoredConveyor,
-			.repetitions = 5,
-		},
-		{
-			.programType = MixedColorBlending,
-			.repetitions = 1,
-		},
-		{
-			.programType = KnightRider,
-			.repetitions = 2,
-		},
-		{
-			.programType = TestDisplays,
-			.repetitions = 1,
+			.repetitions = 12,
 		},
 	};
 

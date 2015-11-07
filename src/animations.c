@@ -27,14 +27,14 @@ struct _RampUpDownAnimation
 	uint8_t up;
 };
 
-RampUpDownAnimation* RampUpDown_create( uint8_t maxValue )
+RampUpDownAnimation* RampUpDown_create( uint8_t maxValue, uint8_t up )
 {
 	RampUpDownAnimation* ani = (RampUpDownAnimation*) malloc( sizeof( RampUpDownAnimation ) );
 
 	if( ani )
 	{
 		ani->maxValue = maxValue;
-		ani->up       = 1;
+		ani->up       = up;
 	}
 
 	return ani;
@@ -105,9 +105,9 @@ MixedColorBlendingProgram* MixedColorBlending_create()
 
 	if( prog )
 	{
-		prog->aniR = RampUpDown_create( MAX_INTENSITY );
-		prog->aniG = RampUpDown_create( MAX_INTENSITY );
-		prog->aniB = RampUpDown_create( MAX_INTENSITY );
+		prog->aniR = RampUpDown_create( MAX_INTENSITY, 1 );
+		prog->aniG = RampUpDown_create( MAX_INTENSITY, 1 );
+		prog->aniB = RampUpDown_create( MAX_INTENSITY, 1 );
 
 		// intial LED intensities
 		prog->r =  0;
@@ -167,7 +167,7 @@ KnightRiderProgram* KnightRider_create()
 
 	if( prog )
 	{
-		prog->ramp = RampUpDown_create( NUM_PIXELS - 1 );
+		prog->ramp = RampUpDown_create( NUM_PIXELS - 1, 1 );
 		prog->centerIndex = 0;
 		prog->frame = 0;
 		memset( prog->fadeState, 0, sizeof( prog->fadeState ) );
@@ -269,7 +269,32 @@ struct _ColoredConveyorProgram
 	uint8_t* colorList[ 3 ];
 	uint8_t colorIndex[ NUM_PIXELS ];
 	uint8_t frame;
+	uint8_t cyclesToGo[ NUM_PIXELS ];
+	uint8_t init[ NUM_PIXELS ];
 };
+
+uint8_t triangle( uint8_t x )
+{
+	uint8_t p = MAX_INTENSITY;
+
+#if 0
+	return p - abs( ( x % ( 2*p ) ) - p );
+#else
+	uint8_t T = 2*p;
+
+	// This is x % T but makes GCC use a faster intrinsic for the division.
+	uint8_t x_ = x - T * ( x / T );
+
+	if( x_ < p )
+	{
+		return x_;
+	}
+	else
+	{
+		return T - x_;
+	}
+#endif
+}
 
 ColoredConveyorProgram* ColoredConveyor_create()
 {
@@ -282,16 +307,21 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 		for( i = 0; i < NUM_PIXELS; i++ )
 		{
-			prog->ramps[ i ] = RampUpDown_create( MAX_INTENSITY );
-
 			// initial LED intensities
-			prog->r[ i ] = i * ( MAX_INTENSITY / ( NUM_PIXELS - 1 ) );
+			// TODO: GCC does not compute these constants at compile-time and thus avoid
+			//       floating-point math. How can we force it to do so? So far, only compiling with
+			//       -03 seems to do the job.
+			uint8_t d = 0.5f + i * ( 2.f * MAX_INTENSITY + 1 ) / NUM_PIXELS;
+			prog->init[ i ] = d;
+			prog->r[ i ] = triangle( d );
 			prog->g[ i ] = 0;
 			prog->b[ i ] = 0;
 
 			prog->colorIndex[ i ] = 0;
 
 			prog->p[ i ] = &prog->r[ i ];
+
+			prog->cyclesToGo[ i ] = 4;
 		}
 
 		prog->colorList[ 0 ] = prog->r;
@@ -306,21 +336,33 @@ ColoredConveyorProgram* ColoredConveyor_create()
 
 void ColoredConveyor_destroy( ColoredConveyorProgram* prog )
 {
-	uint8_t i;
-
-	for( i = 0; i < NUM_PIXELS; i++ )
-	{
-		 RampUpDown_destroy( prog->ramps[ i ] );
-	}
-
 	free( prog );
 }
 
 uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 {
-	static uint8_t const programLen = 56;  // total number of frames in this program
-
 	uint8_t i;
+
+	for( i = 0; i < NUM_PIXELS; i++ )
+	{
+		// ramp up/down the colors pointed to by p
+		*( prog->p[ i ] ) = triangle( prog->init[ i ] + prog->frame );
+		if( *( prog->p[ i ] ) == 0 )
+		{
+			prog->cyclesToGo[ i ] -= 1;
+			if( prog->cyclesToGo[ i ] == 0 )
+			{
+				// if the configured number of triangle cycles has been completed, select the next
+				// color (start at beginning if we reached the color list's end)
+				rampUp( &prog->colorIndex[ i ], 2, 1 );
+
+				uint8_t currentColorIndex = prog->colorIndex[ i ];
+				prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
+
+				prog->cyclesToGo[ i ] = 4;
+			}
+		}
+	}
 
 	// update LED colors for display
 	for( i = 0; i < NUM_PIXELS; i++ )
@@ -328,22 +370,8 @@ uint8_t ColoredConveyor_execute( ColoredConveyorProgram* prog )
 		setIntensity( i, prog->r[ i ], prog->g[ i ], prog->b[ i ] );
 	}
 
-	for( i = 0; i < NUM_PIXELS; i++ )
-	{
-		// ramp up/down the colors pointed to by p
-		if( RampUpDown_step( prog->ramps[ i ], prog->p[ i ], 3 ) )
-		{
-			// if one complete up/down cycle has been completed, select the next color (start at
-			// beginning if we reached the color list's end)
-			rampUp( &prog->colorIndex[ i ], 2, 1 );
-
-			uint8_t currentColorIndex = prog->colorIndex[ i ];
-			prog->p[ i ] = &( prog->colorList[ currentColorIndex ][ i ] );
-		}
-	}
-
 	// advance frame counter (automatically wraps around)
-	return rampUp( &prog->frame, programLen - 1, 1 );
+	return rampUp( &prog->frame, 2 * MAX_INTENSITY - 1, 1 );
 }
 
 
@@ -424,3 +452,6 @@ uint8_t TestDisplays_execute( TestDisplaysProgram* prog )
 	prog->frame += 1;
 	return prog->frame >= PROGRAM_LEN; // 1 - if program length has been reached, otherwise 0
 }
+
+
+
