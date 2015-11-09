@@ -16,6 +16,7 @@ typedef struct
 {
 	enum AnimationProgram programType;
 	uint8_t repetitions;
+	uint16_t timerPeriod;
 }
 AnimationModule;
 

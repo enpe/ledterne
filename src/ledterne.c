@@ -212,6 +212,12 @@ void animationTimerInit()
 }
 
 
+void setAnimationTimer( uint16_t v )
+{
+	OCR1A = v;
+}
+
+
 int main( void )
 {
 	// configure LED pins as outputs, disable by default
@@ -246,15 +252,25 @@ int main( void )
 		{
 			.programType = ColoredConveyor,
 			.repetitions = 12,
+			.timerPeriod = 520,
 		},
 		{
 			.programType = MixedColorBlending,
 			.repetitions = 1,
+			.timerPeriod = 520,
 		},
 		{
 			.programType = KnightRider,
 			.repetitions = 2,
+			.timerPeriod = 520 * 2,
 		},
+#if 0
+		{
+			.programType = TestDisplays,
+			.repetitions = 1,
+			.timerPeriod = 520 * 2,
+		},
+#endif
 	};
 
 	// compute number of modules in the animation
@@ -321,6 +337,8 @@ int main( void )
 						break;
 
 				}
+
+				setAnimationTimer( currentModule->timerPeriod );
 			}
 
 			// execute the current module's program
