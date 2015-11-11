@@ -501,7 +501,7 @@ uint8_t FlickeringCandle_execute( FlickeringCandleProgram* prog )
 		prog->updateAnimation = (uint8_t) ( 128 * ( (float) rand() / RAND_MAX ) );
 	}
 
-	return 0;
+	return ( ( (float) rand() / RAND_MAX ) ) > 0.9999f;
 }
 
 
